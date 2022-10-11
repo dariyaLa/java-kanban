@@ -1,24 +1,31 @@
-import org.apache.commons.lang3.RandomStringUtils;
+import lombok.Getter;
+import lombok.Setter;
 
+public class SubTask extends Task {
 
-public class SubTask extends Task{
-    public int epicId;
+    @Getter
+    @Setter
+    private int epicId;
 
-
-    public SubTask(String name, String discription, int epicId, int id, Status status) {
-        this.name=name;
-        this.discription=discription;
+    protected SubTask(String name, String discription, int epicId, int id, Enum status) {
+        this.name = name;
+        this.discription = discription;
         this.epicId = epicId;
-        this.id=id;
-        this.status=status;
+        this.id = id;
+        this.status = status;
     }
 
-    public static SubTask getRandomSubTask (int epicId, int subTaskId){
-        String name = RandomStringUtils.randomAlphabetic(10);
-        String discription = RandomStringUtils.randomAlphabetic(10);
-        return new SubTask(name,discription,epicId,subTaskId, Status.NEW);
+    protected SubTask(String name, String discription, int epicId) {
+        this.name = name;
+        this.discription = discription;
+        this.epicId = epicId;
     }
 
+    protected SubTask() {}
+
+    public static SubTask createSubTask(SubTask subTask, int subTaskId) {
+        return new SubTask(subTask.name, subTask.discription, subTask.epicId, subTaskId, Status.NEW);
+    }
 
     @Override
     public String toString() {
@@ -32,4 +39,5 @@ public class SubTask extends Task{
                 '}' +
                 "\n";
     }
+
 }

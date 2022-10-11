@@ -1,25 +1,30 @@
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.RandomStringUtils;
-
 public class Epic extends Task {
-    public List<SubTask> subTaskList = new ArrayList<>();
 
-    public Epic(String name, String discription, int id, List<SubTask> subTaskList, Enum status) {
+    @Setter
+    @Getter
+    private List<SubTask> subTaskList = new ArrayList<>();
+
+    protected Epic(String name, String discription, int id, List<SubTask> subTaskList, Enum status) {
         this.name = name;
         this.discription = discription;
         this.id = id;
         this.subTaskList = subTaskList;
         this.status = status;
-
     }
 
-    public static Epic getRandom(int epicId) {
-        String name = RandomStringUtils.randomAlphabetic(10);
-        String discription = RandomStringUtils.randomAlphabetic(10);
-        int id = epicId;
-        return new Epic(name, discription, id, null, Status.NEW);
+    protected Epic(String name, String discription) {
+        this.name = name;
+        this.discription = discription;
+    }
+
+    protected static Epic createEpic(int epicId, Epic epic) {
+        return new Epic(epic.name, epic.discription, epicId, new ArrayList<>(), Status.NEW);
     }
 
     @Override
@@ -33,4 +38,5 @@ public class Epic extends Task {
                 '}' +
                 "\n";
     }
+
 }
