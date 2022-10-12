@@ -1,21 +1,29 @@
-import lombok.Getter;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 public class Manage {
 
-    @Getter
     private HashMap<Integer, Epic> epicHashMap = new HashMap<>();
-    @Getter
     private HashMap<Integer, SubTask> subTaskHashMap = new HashMap<>();
     private HashMap<Integer, Task> taskHashMap = new HashMap<>();
 
     private int taskId = 0;
 
     public void createEpic(Epic epic) {
-        this.epicHashMap.put(++taskId, Epic.createEpic(this.taskId, epic));
+        if (!epicHashMap.isEmpty()) {
+            for (int i : epicHashMap.keySet()) {
+                if (epicHashMap.get(i).getName() == epic.getName()) {
+                    System.out.println("Эпик с таким наименованием уже существует");
+                    break;
+                } else {
+                    this.epicHashMap.put(++taskId, Epic.createEpic(this.taskId, epic));
+                    break;
+                }
+            }
+        } else {
+            this.epicHashMap.put(++taskId, Epic.createEpic(this.taskId, epic));
+        }
     }
 
     public void createSubTask(SubTask subTask) {
@@ -36,25 +44,21 @@ public class Manage {
         System.out.println("Все задачи удалены");
     }
 
-    public Object getTaskWithId(int taskId) {
-        Object object = new Object();
+    public Task getTaskWithId(int taskId) {
         boolean isFound = false;
 
         for (int j : epicHashMap.keySet()) {
             if (j == taskId) {
-                object = epicHashMap.get(j);
                 isFound = true;
-                break;
+                return epicHashMap.get(j);
             }
         }
 
         if (!isFound) {
             for (int j : subTaskHashMap.keySet()) {
                 if (j == taskId) {
-                    System.out.println(subTaskHashMap.get(j));
-                    object = epicHashMap.get(j);
                     isFound = true;
-                    break;
+                    return subTaskHashMap.get(j);
                 }
             }
         }
@@ -62,7 +66,7 @@ public class Manage {
         if (!isFound) {
             System.out.println("Задач с таким id не найдено");
         }
-        return object;
+        return null;
     }
 
     public List<SubTask> getSubTaskEpic(int epicId) {
@@ -178,6 +182,37 @@ public class Manage {
         }
     }
 
+    public HashMap<Integer, Epic> getEpicHashMap() {
+        return epicHashMap;
+    }
+
+    public void setEpicHashMap(HashMap<Integer, Epic> epicHashMap) {
+        this.epicHashMap = epicHashMap;
+    }
+
+    public HashMap<Integer, SubTask> getSubTaskHashMap() {
+        return subTaskHashMap;
+    }
+
+    public void setSubTaskHashMap(HashMap<Integer, SubTask> subTaskHashMap) {
+        this.subTaskHashMap = subTaskHashMap;
+    }
+
+    public HashMap<Integer, Task> getTaskHashMap() {
+        return taskHashMap;
+    }
+
+    public void setTaskHashMap(HashMap<Integer, Task> taskHashMap) {
+        this.taskHashMap = taskHashMap;
+    }
+
+    public int getTaskId() {
+        return taskId;
+    }
+
+    public void setTaskId(int taskId) {
+        this.taskId = taskId;
+    }
 }
     
     

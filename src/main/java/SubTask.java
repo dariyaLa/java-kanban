@@ -1,13 +1,8 @@
-import lombok.Getter;
-import lombok.Setter;
-
 public class SubTask extends Task {
 
-    @Getter
-    @Setter
     private int epicId;
 
-    protected SubTask(String name, String discription, int epicId, int id, Enum status) {
+    public SubTask(String name, String discription, int epicId, int id, Enum status) {
         this.name = name;
         this.discription = discription;
         this.epicId = epicId;
@@ -15,13 +10,14 @@ public class SubTask extends Task {
         this.status = status;
     }
 
-    protected SubTask(String name, String discription, int epicId) {
+    public SubTask(String name, String discription, int epicId) {
         this.name = name;
         this.discription = discription;
         this.epicId = epicId;
     }
 
-    protected SubTask() {}
+    public SubTask() {
+    }
 
     public static SubTask createSubTask(SubTask subTask, int subTaskId) {
         return new SubTask(subTask.name, subTask.discription, subTask.epicId, subTaskId, Status.NEW);
@@ -40,4 +36,11 @@ public class SubTask extends Task {
                 "\n";
     }
 
+    public int getEpicId() {
+        return epicId;
+    }
+
+    public void setEpicId(int epicId) {
+        this.epicId = epicId;
+    }
 }
