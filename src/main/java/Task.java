@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 public class Task {
 
     protected String name;
@@ -6,6 +8,22 @@ public class Task {
     protected Enum status;
 
     public Task() {
+    }
+
+    public Task(String name, String discription, int id, Enum status) {
+        this.name = name;
+        this.discription = discription;
+        this.id = id;
+        this.status = status;
+    }
+
+    public Task(String name, String discription) {
+        this.name = name;
+        this.discription = discription;
+    }
+
+    public static Task createTask(int taskId, Task task) {
+        return new Task(task.name, task.discription, taskId, Status.NEW);
     }
 
     public String getName() {
@@ -40,4 +58,13 @@ public class Task {
         this.status = status;
     }
 
+    @Override
+    public String toString() {
+        return "Task{" +
+                "name='" + name + '\'' +
+                ", discription='" + discription + '\'' +
+                ", id=" + id +
+                ", status=" + status +
+                '}';
+    }
 }
