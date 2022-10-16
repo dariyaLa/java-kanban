@@ -32,7 +32,7 @@ public class Manage {
             if (epicHashMap.get(j).getId() == epicId) {
                 subTask = SubTask.create(subTask, ++taskId);
                 subTaskHashMap.put(taskId, subTask);
-                epicHashMap.get(subTask).getSubTaskList().add(subTask);
+                epicHashMap.get(j).getSubTaskList().add(subTask);
             }
         }
     }

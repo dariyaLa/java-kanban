@@ -36,7 +36,7 @@ public class Main {
             } else if (userInput == 3) {
                 System.out.println("Введите идентификатор задачи, которую хотите получить");
                 userInput = scanner.nextInt();
-                //System.out.println(Epic.getEpicById(manage.getEpicHashMap(),userInput));
+                System.out.println(Epic.getEpicById(manage.getEpicHashMap(),userInput));
             } else if (userInput == 4) {
                 manage.createEpic(epic);
                 System.out.println("Эпик создан");
@@ -73,8 +73,6 @@ public class Main {
                 return;
             } else if (userInput == 9) {
                 System.out.println("Для тестирования");
-                manage.removeEpicId(1);
-                //System.out.println(manage.removeEpicId(1));
             } else {
                 System.out.println("Введена несуществующая команда. Повторите попытку");
             }

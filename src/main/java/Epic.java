@@ -95,11 +95,10 @@ public class Epic extends Task {
     }
 
     //получаем эпик по идентификатору
-    public static Epic getEpicById(HashMap<Integer, Epic> epicHashMap, int taskId) {
-
-        for (int i : epicHashMap.keySet()) {
-            if (i == taskId) {
-                return epicHashMap.get(i);
+    public static Epic getEpicById(List<Epic> epicList, int taskId) {
+        for (Epic i : epicList) {
+            if (i.getId() == taskId) {
+                return i;
             }
         }
         return null;
