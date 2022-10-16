@@ -1,4 +1,4 @@
-import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Task {
 
@@ -22,8 +22,19 @@ public class Task {
         this.discription = discription;
     }
 
-    public static Task createTask(int taskId, Task task) {
+    public static Task create(int taskId, Task task) {
         return new Task(task.name, task.discription, taskId, Status.NEW);
+    }
+
+    //получаем задачу по идентификатору
+    public Task getTaskById(HashMap<Integer, Task> taskHashMap, int taskId) {
+
+        for (int i : taskHashMap.keySet()) {
+            if (i == taskId) {
+                return taskHashMap.get(i);
+            }
+        }
+        return null;
     }
 
     public String getName() {

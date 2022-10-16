@@ -1,26 +1,35 @@
+import java.util.HashMap;
+
 public class SubTask extends Task {
 
     private int epicId;
 
-    public SubTask(String name, String discription, int epicId, int id, Enum status) {
-        this.name = name;
-        this.discription = discription;
+    public SubTask(String name, String discription, int id, Enum status, int epicId) {
+        super(name,discription, id, status);
         this.epicId = epicId;
-        this.id = id;
-        this.status = status;
     }
 
     public SubTask(String name, String discription, int epicId) {
-        this.name = name;
-        this.discription = discription;
+        super(name,discription);
         this.epicId = epicId;
     }
 
     public SubTask() {
     }
 
-    public static SubTask createSubTask(SubTask subTask, int subTaskId) {
-        return new SubTask(subTask.name, subTask.discription, subTask.epicId, subTaskId, Status.NEW);
+    public static SubTask create(SubTask subTask, int subTaskId) {
+        return new SubTask(subTask.name, subTask.discription, subTaskId, Status.NEW, subTask.epicId);
+    }
+
+    //получаем подзадачу по идентификатору
+    public SubTask getSubTaskById(HashMap<Integer,SubTask> subTaskHashMap, int taskId) {
+
+        for (int i : subTaskHashMap.keySet()) {
+            if (i == taskId) {
+                return subTaskHashMap.get(i);
+            }
+        }
+        return null;
     }
 
     @Override
@@ -40,7 +49,9 @@ public class SubTask extends Task {
         return epicId;
     }
 
-    public void setEpicId(int epicId) {
-        this.epicId = epicId;
+    //для проверки обновления используем этот метод,
+    //задаем новые параметры для задачи
+    public int setEpicId(int epicId) {
+        return epicId;
     }
 }
