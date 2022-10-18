@@ -5,12 +5,12 @@ public class SubTask extends Task {
     private int epicId;
 
     public SubTask(String name, String discription, int id, Enum status, int epicId) {
-        super(name,discription, id, status);
+        super(name, discription, id, status);
         this.epicId = epicId;
     }
 
     public SubTask(String name, String discription, int epicId) {
-        super(name,discription);
+        super(name, discription);
         this.epicId = epicId;
     }
 
@@ -22,14 +22,8 @@ public class SubTask extends Task {
     }
 
     //получаем подзадачу по идентификатору
-    public SubTask getSubTaskById(HashMap<Integer,SubTask> subTaskHashMap, int taskId) {
-
-        for (int i : subTaskHashMap.keySet()) {
-            if (i == taskId) {
-                return subTaskHashMap.get(i);
-            }
-        }
-        return null;
+    public SubTask getSubTaskById(HashMap<Integer, SubTask> subTaskHashMap, int taskId) {
+        return subTaskHashMap.get(taskId);
     }
 
     @Override

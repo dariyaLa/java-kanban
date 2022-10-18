@@ -28,12 +28,10 @@ public class Manage {
 
     public void createSubTask(SubTask subTask) {
         int epicId = subTask.getEpicId();
-        for (int j : epicHashMap.keySet()) {
-            if (epicHashMap.get(j).getId() == epicId) {
-                subTask = SubTask.create(subTask, ++taskId);
-                subTaskHashMap.put(taskId, subTask);
-                epicHashMap.get(j).getSubTaskList().add(subTask);
-            }
+        if (epicHashMap.get(epicId).getId() == epicId) {
+            subTask = SubTask.create(subTask, ++taskId);
+            subTaskHashMap.put(taskId, subTask);
+            epicHashMap.get(epicId).getSubTaskList().add(subTask);
         }
     }
 
@@ -57,7 +55,13 @@ public class Manage {
         taskHashMap.clear();
     }
 
-    public void removeAllEpicsAndSubTasks() {
+    public void removeAlLSubTasks() {
+        if (!subTaskHashMap.isEmpty()) {
+            subTaskHashMap.clear();
+        }
+    }
+
+    public void removeAllEpics() {
         if (!epicHashMap.isEmpty()) {
             epicHashMap.clear();
         }
@@ -123,6 +127,30 @@ public class Manage {
     public void updateEpic(Epic epic) {
         epicHashMap.put(epic.getId(), epic);
 
+    }
+
+    //рассчитываем статус эпика в зависимости от статуса задач
+    public static Status checkStatusEpic(List<SubTask> subTaskList) {
+        int countSubTaskDoneEpic = 0;
+
+        for (int i = 0; i < subTaskList.size(); i++) {
+            if (subTaskList.get(i).status == Status.IN_PROGRESS) {
+                return Status.IN_PROGRESS;
+            } else if (subTaskList.get(i).status == Status.DONE) {
+                countSubTaskDoneEpic++;
+            }
+        }
+
+        if (countSubTaskDoneEpic == subTaskList.size()) {
+            return Status.DONE;
+        } else {
+            return Status.NEW;
+        }
+    }
+
+    //получаем задачу по идентификатору
+    public Task getTaskById(int taskId) {
+        return taskHashMap.get(taskId);
     }
 
     public List<Epic> getEpicHashMap() {

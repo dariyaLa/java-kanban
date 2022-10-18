@@ -4,18 +4,16 @@ public class Main {
 
     public static void main(String[] args) {
 
-
         Scanner scanner = new Scanner(System.in);
         Manage manage = new Manage();
-        Epic epicMain = new Epic();
         Epic epic = new Epic("Эпик 1", "Эпик 1 Описание");
+        Epic epic2 = new Epic("Эпик 1", "Эпик 1 Описание");
         SubTask subTaskOneEpicOne = new SubTask("Подзадача 1", "Подзадача 1 Описание", 1);
         SubTask subTaskTwoEpicOne = new SubTask("Подзадача 2", "Подзадача 2 Описание", 1);
         SubTask subTaskThreeEpicOne = new SubTask("Подзадача 3", "Подзадача 3 Описание", 1);
         SubTask subTaskTwoUpdate = new SubTask();
         Task task = new Task("Задача 1", "Описание задачи 1");
         SubTask taskUpdate = new SubTask("Задача 1", "Описание задачи 1 обновленное", 3 , Status.NEW, 1);
-
 
         while (true) {
             // обаботка разных случаев
@@ -32,7 +30,8 @@ public class Main {
                 }
             } else if (userInput == 2) {
                 manage.removeTasks();
-                manage.removeAllEpicsAndSubTasks();
+                manage.removeAlLSubTasks();
+                manage.removeAllEpics();
             } else if (userInput == 3) {
                 System.out.println("Введите идентификатор задачи, которую хотите получить");
                 userInput = scanner.nextInt();
@@ -40,6 +39,7 @@ public class Main {
             } else if (userInput == 4) {
                 manage.createEpic(epic);
                 System.out.println("Эпик создан");
+                manage.createEpic(epic2);
                 manage.createSubTask(subTaskOneEpicOne);
                 manage.createSubTask(subTaskTwoEpicOne);
                 manage.createSubTask(subTaskThreeEpicOne);
@@ -54,10 +54,8 @@ public class Main {
                 subTaskTwoUpdate.setStatus(Status.IN_PROGRESS);
                 subTaskTwoUpdate.setId(3);
                 System.out.println(subTaskTwoUpdate);
-
                 manage.updateSubTask(subTaskTwoUpdate);
                 System.out.println(manage.getSubTaskHashMap().get(3));
-
                 manage.updateTask(taskUpdate);
                 System.out.println(manage.getTaskHashMap());
             } else if (userInput == 6) {

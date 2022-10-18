@@ -1,5 +1,3 @@
-import java.util.HashMap;
-
 public class Task {
 
     protected String name;
@@ -24,17 +22,6 @@ public class Task {
 
     public static Task create(int taskId, Task task) {
         return new Task(task.name, task.discription, taskId, Status.NEW);
-    }
-
-    //получаем задачу по идентификатору
-    public Task getTaskById(HashMap<Integer, Task> taskHashMap, int taskId) {
-
-        for (int i : taskHashMap.keySet()) {
-            if (i == taskId) {
-                return taskHashMap.get(i);
-            }
-        }
-        return null;
     }
 
     public String getName() {
