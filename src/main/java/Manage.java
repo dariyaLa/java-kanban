@@ -137,16 +137,6 @@ public class Manage {
         return epicHashMap;
     }
 
-    //получаем эпик по идентификатору
-    public Epic getEpicById(List<Epic> epicList, int taskId) {
-        for (Epic i : epicList) {
-            if (i.getId() == taskId) {
-                return i;
-            }
-        }
-        return null;
-    }
-
     //удаление подзадачи
     public void removeSubTaskId(int taskId) {
         if (subTaskHashMap.isEmpty()) {
@@ -202,9 +192,24 @@ public class Manage {
         }
     }
 
+    //получаем подзадачу по идентификатору
+    public SubTask getSubTaskById(int taskId) {
+        return subTaskHashMap.get(taskId);
+    }
+
     //получаем задачу по идентификатору
     public Task getTaskById(int taskId) {
         return taskHashMap.get(taskId);
+    }
+
+    //получаем эпик по идентификатору
+    public Epic getEpicById(List<Epic> epicList, int taskId) {
+        for (Epic i : epicList) {
+            if (i.getId() == taskId) {
+                return i;
+            }
+        }
+        return null;
     }
 
     public List<Epic> getEpicHashMap() {
