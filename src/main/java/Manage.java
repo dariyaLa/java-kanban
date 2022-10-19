@@ -93,13 +93,67 @@ public class Manage {
         }
     }
 
+    //обновляем лист подзадач в эпике
+    public HashMap<Integer, Epic> updateListSubTaskEpic(SubTask subTask) {
+        List<SubTask> subTaskListTemp = new ArrayList<>();
+        subTaskListTemp = epicHashMap.get(subTask.getEpicId()).getSubTaskList();
+
+        if (!subTaskListTemp.isEmpty()) {
+            for (int i = 0; i < subTaskListTemp.size(); i++) {
+                if (subTaskListTemp.get(i).id == subTask.id) {
+                    subTaskListTemp.get(i).setStatus(subTask.getStatus());
+                    subTaskListTemp.get(i).setName(subTask.getName());
+                    subTaskListTemp.get(i).setDiscription(subTask.getDiscription());
+                }
+            }
+            Epic epicTemp = new Epic(epicHashMap.get(subTask.getEpicId()).name,
+                    epicHashMap.get(subTask.getEpicId()).discription, epicHashMap.get(subTask.getEpicId()).id,
+                    subTaskListTemp, Manage.checkStatusEpic(subTaskListTemp));
+
+            epicHashMap.put(epicHashMap.get(subTask.getEpicId()).id, epicTemp);
+        }
+        return epicHashMap;
+    }
+
+    //возвращаем список подзадач эпика
+    public static List<SubTask> getSubTaskEpic(List<Epic> epicList, int epicId) {
+        for (Epic j : epicList) {
+            if (j.getId() == epicId) {
+                return j.getSubTaskList();
+            }
+        }
+        return null;
+    }
+
+    //удаление подзадачи в листе подзадач эпика
+    public HashMap<Integer, Epic> removeTaskSubTaskListEpic(int taskId) {
+        int epicId = subTaskHashMap.get(taskId).getEpicId();
+
+        for (int i = 0; i < epicHashMap.get(epicId).getSubTaskList().size(); i++) {
+            if (epicHashMap.get(epicId).getSubTaskList().get(i).id == taskId) {
+                epicHashMap.get(epicId).getSubTaskList().remove(i);
+            }
+        }
+        return epicHashMap;
+    }
+
+    //получаем эпик по идентификатору
+    public Epic getEpicById(List<Epic> epicList, int taskId) {
+        for (Epic i : epicList) {
+            if (i.getId() == taskId) {
+                return i;
+            }
+        }
+        return null;
+    }
+
     //удаление подзадачи
     public void removeSubTaskId(int taskId) {
         if (subTaskHashMap.isEmpty()) {
             System.out.println("Подзадача не создана или удалена");
         } else {
             //удаление подзадачи из листа эпика
-            Epic.removeTaskSubTaskListEpic(epicHashMap, subTaskHashMap, taskId);
+            removeTaskSubTaskListEpic(taskId);
             subTaskHashMap.remove(taskId);
             System.out.println("Подзадача с id " + taskId + " удалена");
         }
@@ -117,7 +171,7 @@ public class Manage {
     public void updateSubTask(SubTask subTask) {
         subTaskHashMap.put(subTask.getId(), subTask);
         //обновляем лист подзадач в эпике
-        Epic.updateListSubTaskEpic(epicHashMap, subTask);
+        updateListSubTaskEpic(subTask);
     }
 
     public void updateTask(Task task) {

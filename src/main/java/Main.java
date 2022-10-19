@@ -35,7 +35,7 @@ public class Main {
             } else if (userInput == 3) {
                 System.out.println("Введите идентификатор задачи, которую хотите получить");
                 userInput = scanner.nextInt();
-                System.out.println(Epic.getEpicById(manage.getEpicHashMap(),userInput));
+                System.out.println(manage.getEpicById(manage.getEpicHashMap(),userInput));
             } else if (userInput == 4) {
                 manage.createEpic(epic);
                 System.out.println("Эпик создан");
@@ -65,7 +65,7 @@ public class Main {
             } else if (userInput == 7) {
                 System.out.println("Введите идентификатор эпика, для получения списка его подзадач");
                 userInput = scanner.nextInt();
-                System.out.println(Epic.getSubTaskEpic(manage.getEpicHashMap(),userInput));
+                System.out.println(manage.getSubTaskEpic(manage.getEpicHashMap(),userInput));
             } else if (userInput == 8) {
                 System.out.println("Выход из приложения");
                 return;
