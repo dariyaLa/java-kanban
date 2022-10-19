@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class Epic extends Task {
@@ -15,65 +14,8 @@ public class Epic extends Task {
         super(name, discription);
     }
 
-    public Epic() {
-    }
-
     public static Epic create(int epicId, Epic epic) {
         return new Epic(epic.name, epic.discription, epicId, new ArrayList<>(), Status.NEW);
-    }
-
-    //обновляем лист подзадач в эпике
-    public static HashMap<Integer, Epic> updateListSubTaskEpic(HashMap<Integer, Epic> epicHashMap, SubTask subTask) {
-        List<SubTask> subTaskListTemp = new ArrayList<>();
-        subTaskListTemp = epicHashMap.get(subTask.getEpicId()).getSubTaskList();
-
-        if (!subTaskListTemp.isEmpty()) {
-            for (int i = 0; i < subTaskListTemp.size(); i++) {
-                if (subTaskListTemp.get(i).id == subTask.id) {
-                    subTaskListTemp.get(i).setStatus(subTask.getStatus());
-                    subTaskListTemp.get(i).setName(subTask.getName());
-                    subTaskListTemp.get(i).setDiscription(subTask.getDiscription());
-                }
-            }
-            Epic epicTemp = new Epic(epicHashMap.get(subTask.getEpicId()).name,
-                    epicHashMap.get(subTask.getEpicId()).discription, epicHashMap.get(subTask.getEpicId()).id,
-                    subTaskListTemp, Manage.checkStatusEpic(subTaskListTemp));
-
-            epicHashMap.put(epicHashMap.get(subTask.getEpicId()).id, epicTemp);
-        }
-        return epicHashMap;
-    }
-
-    //возвращаем список подзадач эпика
-    public static List<SubTask> getSubTaskEpic(List<Epic> epicList, int epicId) {
-        for (Epic j : epicList) {
-            if (j.getId() == epicId) {
-                return j.getSubTaskList();
-            }
-        }
-        return null;
-    }
-
-    //удаление подзадачи в листе подзадач эпика
-    public static HashMap<Integer, Epic> removeTaskSubTaskListEpic(HashMap<Integer, Epic> epicHashMap, HashMap<Integer, SubTask> subTaskHashMap, int taskId) {
-        int epicId = subTaskHashMap.get(taskId).getEpicId();
-
-        for (int i = 0; i < epicHashMap.get(epicId).getSubTaskList().size(); i++) {
-            if (epicHashMap.get(epicId).getSubTaskList().get(i).id == taskId) {
-                epicHashMap.get(epicId).getSubTaskList().remove(i);
-            }
-        }
-        return epicHashMap;
-    }
-
-    //получаем эпик по идентификатору
-    public static Epic getEpicById(List<Epic> epicList, int taskId) {
-        for (Epic i : epicList) {
-            if (i.getId() == taskId) {
-                return i;
-            }
-        }
-        return null;
     }
 
     @Override
