@@ -21,11 +21,6 @@ public class SubTask extends Task {
         return new SubTask(subTask.name, subTask.discription, subTaskId, Status.NEW, subTask.epicId);
     }
 
-    //получаем подзадачу по идентификатору
-    public SubTask getSubTaskById(HashMap<Integer, SubTask> subTaskHashMap, int taskId) {
-        return subTaskHashMap.get(taskId);
-    }
-
     @Override
     public String toString() {
         return "SubTask{" +
