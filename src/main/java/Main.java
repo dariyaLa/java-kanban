@@ -5,7 +5,7 @@ public class Main {
     public static void main(String[] args) {
 
         Scanner scanner = new Scanner(System.in);
-        Manage manage = new Manage();
+        InMemoryTaskManager manage = new InMemoryTaskManager();
         Epic epic = new Epic("Эпик 1", "Эпик 1 Описание");
         Epic epic2 = new Epic("Эпик 1", "Эпик 1 Описание");
         SubTask subTaskOneEpicOne = new SubTask("Подзадача 1", "Подзадача 1 Описание", 1);
@@ -14,6 +14,8 @@ public class Main {
         SubTask subTaskTwoUpdate = new SubTask();
         Task task = new Task("Задача 1", "Описание задачи 1");
         SubTask taskUpdate = new SubTask("Задача 1", "Описание задачи 1 обновленное", 3 , Status.NEW, 1);
+        InMemoryHistoryManager inMemoryHistoryManager = new InMemoryHistoryManager();
+
 
         while (true) {
             // обаботка разных случаев
@@ -70,7 +72,8 @@ public class Main {
                 System.out.println("Выход из приложения");
                 return;
             } else if (userInput == 9) {
-                System.out.println("Для тестирования");
+                System.out.println("Тестирование истории");
+                System.out.println(manage.inMemoryHistoryManager.getHistory());
             } else {
                 System.out.println("Введена несуществующая команда. Повторите попытку");
             }
@@ -87,7 +90,7 @@ public class Main {
                 + "5 - Обновление;" + "\n" // сделано
                 + "6 - Удаление по идентификатору;" + "\n" //сделано
                 + "7 - Получение списка подзадач эпика;" + "\n" //сделано
-                + "9 - Тестирование;" + "\n" //сделано
+                + "9 - Тестирование истории;" + "\n" //сделано
                 + "8 - Выйти из приложения.");
     }
 
