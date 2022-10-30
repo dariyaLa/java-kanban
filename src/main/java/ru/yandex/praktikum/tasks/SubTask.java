@@ -1,4 +1,6 @@
-import java.util.HashMap;
+package ru.yandex.praktikum.tasks;
+
+import ru.yandex.praktikum.models.Status;
 
 public class SubTask extends Task {
 
@@ -23,7 +25,7 @@ public class SubTask extends Task {
 
     @Override
     public String toString() {
-        return "SubTask{" +
+        return "ru.yandex.praktikum.tasks.SubTask{" +
                 "\n" +
                 "epicId=" + epicId +
                 ", name='" + name + '\'' +

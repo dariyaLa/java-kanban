@@ -1,15 +1,12 @@
-import java.util.List;
+import ru.yandex.praktikum.history.InMemoryHistoryManager;
 
 public class Managers {
 
-    private static TaskManager manager = new InMemoryTaskManager();
-    private static HistoryManager inMemoryHistoryManager = new InMemoryHistoryManager();
-
-    public static TaskManager getDefault(){
-       return  manager;
+    public static TaskManager getDefault() {
+        return new InMemoryTaskManager();
     }
 
-    public static List<Task> getDefaultHistory(){
-        return inMemoryHistoryManager.getHistory();
+    public static InMemoryHistoryManager getDefaultHistory() {
+        return new InMemoryHistoryManager();
     }
 }

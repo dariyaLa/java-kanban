@@ -1,3 +1,7 @@
+package ru.yandex.praktikum.tasks;
+
+import ru.yandex.praktikum.models.Status;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +24,7 @@ public class Epic extends Task {
 
     @Override
     public String toString() {
-        return "Epic{" +
+        return "ru.yandex.praktikum.tasks.Epic{" +
                 "\n" +
                 "name='" + name + '\'' +
                 ", discription='" + discription + '\'' +
