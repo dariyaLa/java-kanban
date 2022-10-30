@@ -1,3 +1,9 @@
+import ru.yandex.praktikum.history.HistoryManager;
+import ru.yandex.praktikum.models.Status;
+import ru.yandex.praktikum.tasks.Epic;
+import ru.yandex.praktikum.tasks.SubTask;
+import ru.yandex.praktikum.tasks.Task;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -7,7 +13,7 @@ public class InMemoryTaskManager implements TaskManager {
     private HashMap<Integer, Epic> epicHashMap = new HashMap<>();
     private HashMap<Integer, SubTask> subTaskHashMap = new HashMap<>();
     private HashMap<Integer, Task> taskHashMap = new HashMap<>();
-    HistoryManager inMemoryHistoryManager = new InMemoryHistoryManager();
+    private HistoryManager inMemoryHistoryManager = Managers.getDefaultHistory();
 
     private int taskId = 0;
 
@@ -94,7 +100,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void removeSubTasksHashMap(List<SubTask> subTaskList) {
         for (int i = 0; i < subTaskList.size(); i++) {
             for (int j : subTaskHashMap.keySet()) {
-                if (subTaskHashMap.get(j).getId() == subTaskList.get(i).id) {
+                if (subTaskHashMap.get(j).getId() == subTaskList.get(i).getId()) {
                     subTaskHashMap.remove(j);
                     break;
                 }
@@ -110,17 +116,17 @@ public class InMemoryTaskManager implements TaskManager {
 
         if (!subTaskListTemp.isEmpty()) {
             for (int i = 0; i < subTaskListTemp.size(); i++) {
-                if (subTaskListTemp.get(i).id == subTask.id) {
+                if (subTaskListTemp.get(i).getId() == subTask.getId()) {
                     subTaskListTemp.get(i).setStatus(subTask.getStatus());
                     subTaskListTemp.get(i).setName(subTask.getName());
                     subTaskListTemp.get(i).setDiscription(subTask.getDiscription());
                 }
             }
-            Epic epicTemp = new Epic(epicHashMap.get(subTask.getEpicId()).name,
-                    epicHashMap.get(subTask.getEpicId()).discription, epicHashMap.get(subTask.getEpicId()).id,
+            Epic epicTemp = new Epic(epicHashMap.get(subTask.getEpicId()).getName(),
+                    epicHashMap.get(subTask.getEpicId()).getDiscription(), epicHashMap.get(subTask.getEpicId()).getId(),
                     subTaskListTemp, InMemoryTaskManager.checkStatusEpic(subTaskListTemp));
 
-            epicHashMap.put(epicHashMap.get(subTask.getEpicId()).id, epicTemp);
+            epicHashMap.put(epicHashMap.get(subTask.getEpicId()).getId(), epicTemp);
         }
         return epicHashMap;
     }
@@ -141,7 +147,7 @@ public class InMemoryTaskManager implements TaskManager {
         int epicId = subTaskHashMap.get(taskId).getEpicId();
 
         for (int i = 0; i < epicHashMap.get(epicId).getSubTaskList().size(); i++) {
-            if (epicHashMap.get(epicId).getSubTaskList().get(i).id == taskId) {
+            if (epicHashMap.get(epicId).getSubTaskList().get(i).getId() == taskId) {
                 epicHashMap.get(epicId).getSubTaskList().remove(i);
             }
         }
@@ -194,9 +200,9 @@ public class InMemoryTaskManager implements TaskManager {
         int countSubTaskDoneEpic = 0;
 
         for (int i = 0; i < subTaskList.size(); i++) {
-            if (subTaskList.get(i).status == Status.IN_PROGRESS) {
+            if (subTaskList.get(i).getStatus() == Status.IN_PROGRESS) {
                 return Status.IN_PROGRESS;
-            } else if (subTaskList.get(i).status == Status.DONE) {
+            } else if (subTaskList.get(i).getStatus() == Status.DONE) {
                 countSubTaskDoneEpic++;
             }
         }
@@ -252,8 +258,7 @@ public class InMemoryTaskManager implements TaskManager {
         return taskArrayList;
     }
 
-
-    //public List<Task> getTaskListHistory() {
-    //    return taskListHistory;
-    //}
+    public List<Task> getHistory() {
+        return inMemoryHistoryManager.getHistory();
+    }
 }

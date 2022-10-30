@@ -1,3 +1,9 @@
+import ru.yandex.praktikum.history.InMemoryHistoryManager;
+import ru.yandex.praktikum.models.Status;
+import ru.yandex.praktikum.tasks.Epic;
+import ru.yandex.praktikum.tasks.SubTask;
+import ru.yandex.praktikum.tasks.Task;
+
 import java.util.Scanner;
 
 public class Main {
@@ -73,7 +79,7 @@ public class Main {
                 return;
             } else if (userInput == 9) {
                 System.out.println("Тестирование истории");
-                System.out.println(manage.inMemoryHistoryManager.getHistory());
+                System.out.println(manage.getHistory());
             } else {
                 System.out.println("Введена несуществующая команда. Повторите попытку");
             }

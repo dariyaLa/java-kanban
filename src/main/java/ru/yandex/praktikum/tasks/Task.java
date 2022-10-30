@@ -1,3 +1,7 @@
+package ru.yandex.praktikum.tasks;
+
+import ru.yandex.praktikum.models.Status;
+
 public class Task {
 
     protected String name;
@@ -58,7 +62,7 @@ public class Task {
 
     @Override
     public String toString() {
-        return "Task{" +
+        return "ru.yandex.praktikum.tasks.Task{" +
                 "name='" + name + '\'' +
                 ", discription='" + discription + '\'' +
                 ", id=" + id +

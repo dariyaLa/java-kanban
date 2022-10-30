@@ -1,3 +1,8 @@
+import ru.yandex.praktikum.models.Status;
+import ru.yandex.praktikum.tasks.Epic;
+import ru.yandex.praktikum.tasks.SubTask;
+import ru.yandex.praktikum.tasks.Task;
+
 import java.util.HashMap;
 import java.util.List;
 
@@ -55,9 +60,9 @@ public interface TaskManager {
         int countSubTaskDoneEpic = 0;
 
         for (int i = 0; i < subTaskList.size(); i++) {
-            if (subTaskList.get(i).status == Status.IN_PROGRESS) {
+            if (subTaskList.get(i).getStatus() == Status.IN_PROGRESS) {
                 return Status.IN_PROGRESS;
-            } else if (subTaskList.get(i).status == Status.DONE) {
+            } else if (subTaskList.get(i).getStatus() == Status.DONE) {
                 countSubTaskDoneEpic++;
             }
         }
