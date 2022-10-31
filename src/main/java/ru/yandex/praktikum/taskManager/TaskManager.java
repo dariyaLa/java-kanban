@@ -1,3 +1,5 @@
+package ru.yandex.praktikum.taskManager;
+
 import ru.yandex.praktikum.models.Status;
 import ru.yandex.praktikum.tasks.Epic;
 import ru.yandex.praktikum.tasks.SubTask;
@@ -29,16 +31,7 @@ public interface TaskManager {
     HashMap<Integer, Epic> updateListSubTaskEpic(SubTask subTask);
 
     //возвращаем список подзадач эпика
-    static List<SubTask> getSubTaskEpic(List<Epic> epicList, int epicId) {
-        {
-            for (Epic j : epicList) {
-                if (j.getId() == epicId) {
-                    return j.getSubTaskList();
-                }
-            }
-            return null;
-        }
-    }
+    List<SubTask> getSubTaskEpic(List<Epic> epicList, int epicId);
 
     //удаление подзадачи в листе подзадач эпика
     HashMap<Integer, Epic> removeTaskSubTaskListEpic(int taskId);
@@ -56,23 +49,7 @@ public interface TaskManager {
     void updateEpic(Epic epic);
 
     //рассчитываем статус эпика в зависимости от статуса задач
-    static Status checkStatusEpic(List<SubTask> subTaskList) {
-        int countSubTaskDoneEpic = 0;
-
-        for (int i = 0; i < subTaskList.size(); i++) {
-            if (subTaskList.get(i).getStatus() == Status.IN_PROGRESS) {
-                return Status.IN_PROGRESS;
-            } else if (subTaskList.get(i).getStatus() == Status.DONE) {
-                countSubTaskDoneEpic++;
-            }
-        }
-
-        if (countSubTaskDoneEpic == subTaskList.size()) {
-            return Status.DONE;
-        } else {
-            return Status.NEW;
-        }
-    }
+    Status checkStatusEpic(List<SubTask> subTaskList);
 
     //получаем подзадачу по идентификатору
     SubTask getSubTaskById(int taskId);

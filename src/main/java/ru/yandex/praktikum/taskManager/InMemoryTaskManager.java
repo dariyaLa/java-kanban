@@ -1,8 +1,11 @@
+package ru.yandex.praktikum.taskManager;
+
 import ru.yandex.praktikum.history.HistoryManager;
 import ru.yandex.praktikum.models.Status;
 import ru.yandex.praktikum.tasks.Epic;
 import ru.yandex.praktikum.tasks.SubTask;
 import ru.yandex.praktikum.tasks.Task;
+import ru.yandex.praktikum.utilits.Managers;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -124,7 +127,7 @@ public class InMemoryTaskManager implements TaskManager {
             }
             Epic epicTemp = new Epic(epicHashMap.get(subTask.getEpicId()).getName(),
                     epicHashMap.get(subTask.getEpicId()).getDiscription(), epicHashMap.get(subTask.getEpicId()).getId(),
-                    subTaskListTemp, InMemoryTaskManager.checkStatusEpic(subTaskListTemp));
+                    subTaskListTemp, checkStatusEpic(subTaskListTemp));
 
             epicHashMap.put(epicHashMap.get(subTask.getEpicId()).getId(), epicTemp);
         }
@@ -132,7 +135,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     //возвращаем список подзадач эпика
-    public static List<SubTask> getSubTaskEpic(List<Epic> epicList, int epicId) {
+    public List<SubTask> getSubTaskEpic(List<Epic> epicList, int epicId) {
         for (Epic j : epicList) {
             if (j.getId() == epicId) {
                 return j.getSubTaskList();
@@ -196,7 +199,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     //рассчитываем статус эпика в зависимости от статуса задач
-    public static Status checkStatusEpic(List<SubTask> subTaskList) {
+    public Status checkStatusEpic(List<SubTask> subTaskList) {
         int countSubTaskDoneEpic = 0;
 
         for (int i = 0; i < subTaskList.size(); i++) {

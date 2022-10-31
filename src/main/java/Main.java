@@ -1,5 +1,6 @@
 import ru.yandex.praktikum.history.InMemoryHistoryManager;
 import ru.yandex.praktikum.models.Status;
+import ru.yandex.praktikum.taskManager.InMemoryTaskManager;
 import ru.yandex.praktikum.tasks.Epic;
 import ru.yandex.praktikum.tasks.SubTask;
 import ru.yandex.praktikum.tasks.Task;
@@ -80,6 +81,10 @@ public class Main {
             } else if (userInput == 9) {
                 System.out.println("Тестирование истории");
                 System.out.println(manage.getHistory());
+            } else if (userInput == 10) {
+                System.out.println("Введите идентификатор подзадачи, которую хотите получить");
+                userInput = scanner.nextInt();
+                System.out.println(manage.getSubTaskById(userInput));
             } else {
                 System.out.println("Введена несуществующая команда. Повторите попытку");
             }
@@ -91,12 +96,13 @@ public class Main {
                 + "Выберите один из пунктов меню:" + "\n"
                 + "1 - Получение списка всех задач;" + "\n" //сделано
                 + "2 - Удаление всех задач;" + "\n" //сделано
-                + "3 - Получение задачи по идентификатору;" + "\n" //сделано
+                + "3 - Получение эпика по идентификатору;" + "\n" //сделано
                 + "4 - Создание эпиков и подзадач (random data);" + "\n" //сделано
                 + "5 - Обновление;" + "\n" // сделано
                 + "6 - Удаление по идентификатору;" + "\n" //сделано
                 + "7 - Получение списка подзадач эпика;" + "\n" //сделано
                 + "9 - Тестирование истории;" + "\n" //сделано
+                + "10 - Получение подзадачи по идентификатору;" + "\n" //сделано
                 + "8 - Выйти из приложения.");
     }
 
