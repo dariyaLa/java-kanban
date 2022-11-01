@@ -7,17 +7,15 @@ import java.util.List;
 
 public class InMemoryHistoryManager implements HistoryManager {
 
-    private final int COUNT_TASK_IN_LIST_HISTORY = 10;
+    private final int COUNT_TASK_IN_LIST_HISTORY = 3;
     private final List<Task> taskListHistory = new LinkedList<>();
     private final int INDEX_FOR_REMOVE = 0;
 
     @Override
     public void add(Task task) {
-        if (taskListHistory.size() < COUNT_TASK_IN_LIST_HISTORY) {
-            taskListHistory.add(task);
-        } else {
+        taskListHistory.add(task);
+        if (taskListHistory.size() > COUNT_TASK_IN_LIST_HISTORY) {
             taskListHistory.remove(INDEX_FOR_REMOVE);
-            taskListHistory.add(task);
         }
     }
 
