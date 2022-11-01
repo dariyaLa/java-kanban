@@ -11,6 +11,7 @@ public class InMemoryHistoryManager implements HistoryManager {
     private final List<Task> taskListHistory = new LinkedList<>();
     private final int INDEX_FOR_REMOVE = 0;
 
+    //нельзя тут справится без else
     @Override
     public void add(Task task) {
         taskListHistory.add(task);
