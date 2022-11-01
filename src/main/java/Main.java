@@ -21,7 +21,6 @@ public class Main {
         SubTask subTaskTwoUpdate = new SubTask();
         Task task = new Task("Задача 1", "Описание задачи 1");
         SubTask taskUpdate = new SubTask("Задача 1", "Описание задачи 1 обновленное", 3 , Status.NEW, 1);
-        InMemoryHistoryManager inMemoryHistoryManager = new InMemoryHistoryManager();
 
 
         while (true) {
@@ -80,7 +79,7 @@ public class Main {
                 return;
             } else if (userInput == 9) {
                 System.out.println("Тестирование истории");
-                System.out.println(manage.getHistory());
+                System.out.println(manage.getInMemoryHistoryManager().getHistory());
             } else if (userInput == 10) {
                 System.out.println("Введите идентификатор подзадачи, которую хотите получить");
                 userInput = scanner.nextInt();

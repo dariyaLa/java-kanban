@@ -1,6 +1,7 @@
 package ru.yandex.praktikum.taskManager;
 
 import ru.yandex.praktikum.history.HistoryManager;
+import ru.yandex.praktikum.history.InMemoryHistoryManager;
 import ru.yandex.praktikum.models.Status;
 import ru.yandex.praktikum.tasks.Epic;
 import ru.yandex.praktikum.tasks.SubTask;
@@ -114,8 +115,7 @@ public class InMemoryTaskManager implements TaskManager {
     //обновляем лист подзадач в эпике
     @Override
     public HashMap<Integer, Epic> updateListSubTaskEpic(SubTask subTask) {
-        List<SubTask> subTaskListTemp = new ArrayList<>();
-        subTaskListTemp = epicHashMap.get(subTask.getEpicId()).getSubTaskList();
+        List<SubTask> subTaskListTemp = epicHashMap.get(subTask.getEpicId()).getSubTaskList();
 
         if (!subTaskListTemp.isEmpty()) {
             for (int i = 0; i < subTaskListTemp.size(); i++) {
@@ -135,6 +135,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     //возвращаем список подзадач эпика
+    @Override
     public List<SubTask> getSubTaskEpic(List<Epic> epicList, int epicId) {
         for (Epic j : epicList) {
             if (j.getId() == epicId) {
@@ -199,6 +200,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     //рассчитываем статус эпика в зависимости от статуса задач
+    @Override
     public Status checkStatusEpic(List<SubTask> subTaskList) {
         int countSubTaskDoneEpic = 0;
 
@@ -261,7 +263,7 @@ public class InMemoryTaskManager implements TaskManager {
         return taskArrayList;
     }
 
-    public List<Task> getHistory() {
-        return inMemoryHistoryManager.getHistory();
+    public HistoryManager getInMemoryHistoryManager() {
+        return inMemoryHistoryManager;
     }
 }
