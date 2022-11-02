@@ -1,5 +1,6 @@
 package ru.yandex.praktikum.taskManager;
 
+import ru.yandex.praktikum.history.HistoryManager;
 import ru.yandex.praktikum.models.Status;
 import ru.yandex.praktikum.tasks.Epic;
 import ru.yandex.praktikum.tasks.SubTask;
@@ -65,4 +66,6 @@ public interface TaskManager {
     List<SubTask> getSubTaskHashMap();
 
     List<Task> getTaskHashMap();
+
+    HistoryManager getInMemoryHistoryManager();
 }
