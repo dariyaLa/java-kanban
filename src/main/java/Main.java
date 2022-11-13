@@ -75,7 +75,7 @@ public class Main {
                 System.out.println(taskManager.getSubTaskEpic(taskManager.getEpicHashMap(), userInput));
             } else if (userInput == 8) {
                 System.out.println("Тестирование истории");
-                System.out.println(taskManager.getInMemoryHistoryManager().getHistory());
+                System.out.println(taskManager.getInMemoryHistoryManager());
             } else if (userInput == 9) {
                 System.out.println("Введите идентификатор подзадачи, которую хотите получить");
                 userInput = scanner.nextInt();
