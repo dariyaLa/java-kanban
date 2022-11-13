@@ -67,5 +67,5 @@ public interface TaskManager {
 
     List<Task> getTaskHashMap();
 
-    HistoryManager getInMemoryHistoryManager();
+    List<Task> getInMemoryHistoryManager();
 }
