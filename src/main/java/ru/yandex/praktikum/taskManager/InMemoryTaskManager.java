@@ -1,7 +1,6 @@
 package ru.yandex.praktikum.taskManager;
 
 import ru.yandex.praktikum.history.HistoryManager;
-import ru.yandex.praktikum.history.InMemoryHistoryManager;
 import ru.yandex.praktikum.models.Status;
 import ru.yandex.praktikum.tasks.Epic;
 import ru.yandex.praktikum.tasks.SubTask;
@@ -18,8 +17,7 @@ public class InMemoryTaskManager implements TaskManager {
     private HashMap<Integer, Epic> epicHashMap = new HashMap<>();
     private HashMap<Integer, SubTask> subTaskHashMap = new HashMap<>();
     private HashMap<Integer, Task> taskHashMap = new HashMap<>();
-    //private HistoryManager inMemoryHistoryManager = Managers.getDefaultHistory();
-    private InMemoryHistoryManager inMemoryHistoryManager = new InMemoryHistoryManager();
+    private HistoryManager inMemoryHistoryManager = Managers.getDefaultHistory();
 
     private int taskId = 0;
 
@@ -69,14 +67,20 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void removeTasks() {
-        removeFromHistoryTasksHashMapTask(taskHashMap);
-        taskHashMap.clear();
+        if (!taskHashMap.isEmpty()) {
+            for (Map.Entry<Integer, Task> task : taskHashMap.entrySet()) { //удаляем из истории просмотров
+                inMemoryHistoryManager.remove(task.getKey());
+            }
+            taskHashMap.clear();
+        }
     }
 
     @Override
     public void removeAlLSubTasks() {
         if (!subTaskHashMap.isEmpty()) {
-            removeFromHistoryTasksHashMapSubTask(subTaskHashMap);
+            for (Map.Entry<Integer, SubTask> task : subTaskHashMap.entrySet()) { //удаляем из истории просмотров
+                inMemoryHistoryManager.remove(task.getKey());
+            }
             subTaskHashMap.clear();
         }
     }
@@ -84,10 +88,15 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void removeAllEpics() {
         if (!epicHashMap.isEmpty()) {
-            removeFromHistoryTasksHashMapEpic(epicHashMap);
+            for (Map.Entry<Integer, Epic> task : epicHashMap.entrySet()) { //удаляем из истории просмотров
+                inMemoryHistoryManager.remove(task.getKey());
+            }
             epicHashMap.clear();
         }
         if (!subTaskHashMap.isEmpty()) {
+            for (Map.Entry<Integer, SubTask> task : subTaskHashMap.entrySet()) { //удаляем из истории просмотров
+                inMemoryHistoryManager.remove(task.getKey());
+            }
             subTaskHashMap.clear();
         }
     }
@@ -98,39 +107,18 @@ public class InMemoryTaskManager implements TaskManager {
             System.out.println("Эпик не создан или удален");
         } else {
             if (!epicHashMap.get(taskId).getSubTaskList().isEmpty()) {
-                removeFromHistoryTasks(epicHashMap.get(taskId).getSubTaskList()); //удаляем из истории просмот сабтасков
+                removeFromHistoryTasks(epicHashMap.get(taskId).getSubTaskList()); //удаляем из истории просмотр сабтасков
                 removeSubTasksHashMap(epicHashMap.get(taskId).getSubTaskList());
             }
-            inMemoryHistoryManager.removeHistoryAfterRemoveTask(epicHashMap.get(taskId)); //удаляем из истории просмотров эпик
+            inMemoryHistoryManager.remove(taskId);
             epicHashMap.remove(taskId);
         }
     }
 
     //подчищаем из истории просмотр сабтасков после удаления эпика
-    public void removeFromHistoryTasks(List<SubTask> listSuTask) {
-        for (Task task : listSuTask) {
-            inMemoryHistoryManager.removeHistoryAfterRemoveTask(task);
-        }
-    }
-
-    //подчищаем историю просмотров после удаления всех тасок
-    public void removeFromHistoryTasksHashMapTask(HashMap<Integer, Task> taskHashMap) {
-        for (Map.Entry<Integer, Task> task : taskHashMap.entrySet()) {
-            inMemoryHistoryManager.removeHistoryAfterRemoveTask(task.getValue());
-        }
-    }
-
-    //подчищаем историю просмотров после удаления всех эпиков
-    public void removeFromHistoryTasksHashMapEpic(HashMap<Integer, Epic> taskHashMap) {
-        for (Map.Entry<Integer, Epic> task : taskHashMap.entrySet()) {
-            inMemoryHistoryManager.removeHistoryAfterRemoveTask(task.getValue());
-        }
-    }
-
-    //подчищаем историю просмотров после удаления всех сабтасков
-    public void removeFromHistoryTasksHashMapSubTask(HashMap<Integer, SubTask> taskHashMap) {
-        for (Map.Entry<Integer, SubTask> task : taskHashMap.entrySet()) {
-            inMemoryHistoryManager.removeHistoryAfterRemoveTask(task.getValue());
+    public void removeFromHistoryTasks(List<SubTask> listTasks) {
+        for (Task task : listTasks) {
+            inMemoryHistoryManager.remove(task.getId());
         }
     }
 
@@ -200,7 +188,7 @@ public class InMemoryTaskManager implements TaskManager {
             System.out.println("Подзадача не создана или удалена");
         } else {
             //удаление подзадачи из листа эпика
-            inMemoryHistoryManager.removeHistoryAfterRemoveTask(subTaskHashMap.get(taskId));
+            inMemoryHistoryManager.remove(taskId);//удаление из истории просмотров
             removeTaskSubTaskListEpic(taskId);
             subTaskHashMap.remove(taskId);
             System.out.println("Подзадача с id " + taskId + " удалена");
@@ -213,7 +201,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (taskHashMap.isEmpty()) {
             System.out.println("Список задач пуст");
         } else {
-            inMemoryHistoryManager.removeHistoryAfterRemoveTask(taskHashMap.get(taskId));
+            inMemoryHistoryManager.remove(taskId);
             taskHashMap.remove(taskId);
         }
     }

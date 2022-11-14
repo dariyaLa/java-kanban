@@ -70,17 +70,21 @@ public class Main {
                 userInput = scanner.nextInt();
                 taskManager.removeEpicId(userInput);
             } else if (userInput == 7) {
+                System.out.println("Введите идентификатор задачи, которую хотите удалить");
+                userInput = scanner.nextInt();
+                taskManager.removeSubTaskId(userInput);
+            } else if (userInput == 8) {
                 System.out.println("Введите идентификатор эпика, для получения списка его подзадач");
                 userInput = scanner.nextInt();
                 System.out.println(taskManager.getSubTaskEpic(taskManager.getEpicHashMap(), userInput));
-            } else if (userInput == 8) {
+            } else if (userInput == 9) {
                 System.out.println("Тестирование истории");
                 System.out.println(taskManager.getInMemoryHistoryManager());
-            } else if (userInput == 9) {
+            } else if (userInput == 10) {
                 System.out.println("Введите идентификатор подзадачи, которую хотите получить");
                 userInput = scanner.nextInt();
                 System.out.println(taskManager.getSubTaskById(userInput));
-            } else if (userInput == 10) {
+            } else if (userInput == 0) {
                 System.out.println("Выход из приложения");
                 return;
             } else {
@@ -97,11 +101,12 @@ public class Main {
                 + "3 - Получение эпика по идентификатору;" + "\n" //сделано
                 + "4 - Создание эпиков и подзадач (random data);" + "\n" //сделано
                 + "5 - Обновление;" + "\n" // сделано
-                + "6 - Удаление по идентификатору;" + "\n" //сделано
-                + "7 - Получение списка подзадач эпика;" + "\n" //сделано
-                + "8 - Тестирование истории;" + "\n" //сделано
-                + "9 - Получение подзадачи по идентификатору;" + "\n" //сделано
-                + "10 - Выйти из приложения.");
+                + "6 - Удаление эпика по идентификатору;" + "\n" //сделано
+                + "7 - Удаление подзадачи по идентификатору;" + "\n" //сделано
+                + "8 - Получение списка подзадач эпика;" + "\n" //сделано
+                + "9 - Тестирование истории;" + "\n" //сделано
+                + "10 - Получение подзадачи по идентификатору;" + "\n" //сделано
+                + "0 - Выйти из приложения.");
     }
 
 }
