@@ -3,12 +3,15 @@ package ru.yandex.praktikum.history;
 import ru.yandex.praktikum.tasks.Task;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class CustomLinkedList {
 
     private Node head;
     private Node tail;
+    private Map<Integer, Node> nodeMap = new HashMap<>();
 
     public Node linkLast(Task task) {
         Node node = new Node(null, null, task);
@@ -21,10 +24,10 @@ public class CustomLinkedList {
             tail = node;
         }
         return node;
-
     }
 
-    public void removeNode(Node node) {
+    public void removeNode(int id) {
+        Node node = nodeMap.get(id);
         Node nodeNext = node.linkNext;
         Node nodePrev = node.linkPrev;
 
@@ -55,14 +58,14 @@ public class CustomLinkedList {
             historyList.add(node.task);
             node = node.linkNext;
         }
-
         return historyList;
     }
 
-    //у меня мапа хранится в другом классе. по заданию сказано - что значение по ключу в мапе - это узел списка, т.е. Node.
-    //т.е. я не смогу хранить мапу с узлами в InMemoryHistoryManager.
-    //если мапу перемещать в другой класс и Node делать приватным, я не смогу передать ноду из InMemoryHistoryManager для ее удаления из списка.
-    static class Node {
+    public Map<Integer, Node> getNodeMap() {
+        return nodeMap;
+    }
+
+    private static class Node {
         Node linkNext;
         Node linkPrev;
         Task task;
