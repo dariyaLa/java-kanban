@@ -1,5 +1,6 @@
 package ru.yandex.praktikum.taskManager;
 
+import ru.yandex.praktikum.exception.ManagerSaveException;
 import ru.yandex.praktikum.history.HistoryManager;
 import ru.yandex.praktikum.models.Status;
 import ru.yandex.praktikum.tasks.Epic;
@@ -7,6 +8,7 @@ import ru.yandex.praktikum.tasks.SubTask;
 import ru.yandex.praktikum.tasks.Task;
 import ru.yandex.praktikum.utilits.Managers;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,47 +24,61 @@ public class InMemoryTaskManager implements TaskManager {
     private int taskId = 0;
 
     @Override
-    public void createEpic(Epic epic) {
+    public Epic createEpic(Epic epic) throws IOException, ManagerSaveException {
         if (!epicHashMap.isEmpty()) {
             for (int i : epicHashMap.keySet()) {
                 if (epicHashMap.get(i).getName() == epic.getName()) {
                     System.out.println("Эпик с таким наименованием уже существует");
                     break;
                 } else {
-                    this.epicHashMap.put(++taskId, Epic.create(this.taskId, epic));
+                    ++taskId;
+                    epic = Epic.create(this.taskId, epic);
+                    this.epicHashMap.put(taskId, epic);
                     break;
                 }
             }
         } else {
-            this.epicHashMap.put(++taskId, Epic.create(this.taskId, epic));
+            ++taskId;
+            epic = Epic.create(this.taskId, epic);
+            this.epicHashMap.put(taskId, epic);
+            //this.epicHashMap.put(++taskId, Epic.create(this.taskId, epic));
         }
+        return epic;
     }
 
     @Override
-    public void createSubTask(SubTask subTask) {
+    public SubTask createSubTask(SubTask subTask) throws IOException, ManagerSaveException {
         int epicId = subTask.getEpicId();
         if (epicHashMap.get(epicId).getId() == epicId) {
             subTask = SubTask.create(subTask, ++taskId);
             subTaskHashMap.put(taskId, subTask);
             epicHashMap.get(epicId).getSubTaskList().add(subTask);
         }
+
+        return subTask;
     }
 
     @Override
-    public void createTask(Task task) {
+    public Task createTask(Task task) throws IOException, ManagerSaveException {
         if (!taskHashMap.isEmpty()) {
             for (int i : taskHashMap.keySet()) {
                 if (taskHashMap.get(i).getName() == task.getName()) {
                     System.out.println("Задача с таким наименованием уже существует");
                     break;
                 } else {
-                    this.taskHashMap.put(++taskId, Task.create(this.taskId, task));
+                    ++taskId;
+                    task = Task.create(this.taskId, task);
+                    this.taskHashMap.put(taskId, task);
                     break;
                 }
             }
         } else {
-            this.taskHashMap.put(++taskId, Task.create(this.taskId, task));
+            ++taskId;
+            task = Task.create(this.taskId, task);
+            this.taskHashMap.put(taskId, task);
+            //this.taskHashMap.put(++taskId, Task.create(this.taskId, task));
         }
+        return task;
     }
 
     @Override
@@ -291,5 +307,24 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public List<Task> getInMemoryHistoryManager() {
         return inMemoryHistoryManager.getHistory();
+    }
+
+    public HistoryManager getInMemoryHistoryManagerDefault() {
+        return inMemoryHistoryManager;
+    }
+
+    public HashMap<Integer, Epic> setEpicHashMap() {
+        epicHashMap = new HashMap<>();
+        return epicHashMap;
+    }
+
+    public HashMap<Integer, SubTask> setSubTaskHashMap() {
+        subTaskHashMap = new HashMap<>();
+        return subTaskHashMap;
+    }
+
+    public HashMap<Integer, Task> setTaskHashMap() {
+        taskHashMap = new HashMap<>();
+        return taskHashMap;
     }
 }

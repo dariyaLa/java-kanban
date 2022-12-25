@@ -1,15 +1,18 @@
+import ru.yandex.praktikum.exception.ManagerSaveException;
 import ru.yandex.praktikum.models.Status;
+import ru.yandex.praktikum.taskManager.FileBackedTasksManager;
 import ru.yandex.praktikum.taskManager.TaskManager;
 import ru.yandex.praktikum.tasks.Epic;
 import ru.yandex.praktikum.tasks.SubTask;
 import ru.yandex.praktikum.tasks.Task;
 import ru.yandex.praktikum.utilits.Managers;
 
+import java.io.*;
 import java.util.Scanner;
 
 public class Main {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
         Scanner scanner = new Scanner(System.in);
         Epic epic = new Epic("Эпик 1", "Эпик 1 Описание");
@@ -21,6 +24,10 @@ public class Main {
         Task task = new Task("Задача 1", "Описание задачи 1");
         SubTask taskUpdate = new SubTask("Задача 1", "Описание задачи 1 обновленное", 3, Status.NEW, 1);
         TaskManager taskManager = Managers.getDefault();
+        FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager();
+        FileBackedTasksManager fileBackedTasksManagerFromFile = new FileBackedTasksManager();
+        FileReader fileReader = new FileReader("file.csv");
+        Writer fileWriter = new FileWriter("file.csv", true);
 
         while (true) {
             // обаботка разных случаев
@@ -84,6 +91,23 @@ public class Main {
                 System.out.println("Введите идентификатор подзадачи, которую хотите получить");
                 userInput = scanner.nextInt();
                 System.out.println(taskManager.getSubTaskById(userInput));
+            } else if (userInput == 11) {
+                fileBackedTasksManager.createEpic(epic);
+                fileBackedTasksManager.createTask(task);
+                fileBackedTasksManager.createSubTask(subTaskOneEpicOne);
+                System.out.println("Созданы эпик, подзадача, задача");
+                System.out.println("Все задачи записаны в файл");
+                System.out.println(fileBackedTasksManager.getEpicById(fileBackedTasksManager.getEpicHashMap(), 1));
+                System.out.println("Для истории получен эпик по идентификатору");
+                FileBackedTasksManager.historyToString(fileBackedTasksManager.getInMemoryHistoryManagerDefault());
+                System.out.println("История записана в файл");
+                FileBackedTasksManager.getFileWriter().close();
+            } else if (userInput == 12) {
+                FileBackedTasksManager.loadFromFile(fileReader, fileBackedTasksManagerFromFile);
+                System.out.println("Задачи считаны из файла");
+            } else if (userInput == 13) {
+                System.out.println("История считана из файла");
+                System.out.println(FileBackedTasksManager.historyFromString(fileBackedTasksManagerFromFile));
             } else if (userInput == 0) {
                 System.out.println("Выход из приложения");
                 return;
@@ -106,6 +130,9 @@ public class Main {
                 + "8 - Получение списка подзадач эпика;" + "\n" //сделано
                 + "9 - Тестирование истории;" + "\n" //сделано
                 + "10 - Получение подзадачи по идентификатору;" + "\n" //сделано
+                + "11 - Запись в файл;" + "\n" //сделано
+                + "12 - Чтение из файла;" + "\n" //сделано
+                + "13 - Считать историю из файла;" + "\n" //сделано
                 + "0 - Выйти из приложения.");
     }
 
