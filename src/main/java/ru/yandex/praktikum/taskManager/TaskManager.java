@@ -1,23 +1,21 @@
 package ru.yandex.praktikum.taskManager;
 
-import ru.yandex.praktikum.exception.ManagerSaveException;
 import ru.yandex.praktikum.history.HistoryManager;
 import ru.yandex.praktikum.models.Status;
 import ru.yandex.praktikum.tasks.Epic;
 import ru.yandex.praktikum.tasks.SubTask;
 import ru.yandex.praktikum.tasks.Task;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
 public interface TaskManager {
 
-    Epic createEpic(Epic epic) throws IOException, ManagerSaveException;
+    Epic createEpic(Epic epic);
 
-    SubTask createSubTask(SubTask subTask) throws IOException, ManagerSaveException;
+    SubTask createSubTask(SubTask subTask);
 
-    Task createTask(Task task) throws IOException, ManagerSaveException;
+    Task createTask(Task task);
 
     void removeTasks();
 

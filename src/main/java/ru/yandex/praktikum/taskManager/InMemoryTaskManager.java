@@ -1,6 +1,5 @@
 package ru.yandex.praktikum.taskManager;
 
-import ru.yandex.praktikum.exception.ManagerSaveException;
 import ru.yandex.praktikum.history.HistoryManager;
 import ru.yandex.praktikum.models.Status;
 import ru.yandex.praktikum.tasks.Epic;
@@ -8,7 +7,6 @@ import ru.yandex.praktikum.tasks.SubTask;
 import ru.yandex.praktikum.tasks.Task;
 import ru.yandex.praktikum.utilits.Managers;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,7 +22,7 @@ public class InMemoryTaskManager implements TaskManager {
     private int taskId = 0;
 
     @Override
-    public Epic createEpic(Epic epic) throws IOException, ManagerSaveException {
+    public Epic createEpic(Epic epic) {
         if (!epicHashMap.isEmpty()) {
             for (int i : epicHashMap.keySet()) {
                 if (epicHashMap.get(i).getName() == epic.getName()) {
@@ -41,13 +39,12 @@ public class InMemoryTaskManager implements TaskManager {
             ++taskId;
             epic = Epic.create(this.taskId, epic);
             this.epicHashMap.put(taskId, epic);
-            //this.epicHashMap.put(++taskId, Epic.create(this.taskId, epic));
         }
         return epic;
     }
 
     @Override
-    public SubTask createSubTask(SubTask subTask) throws IOException, ManagerSaveException {
+    public SubTask createSubTask(SubTask subTask) {
         int epicId = subTask.getEpicId();
         if (epicHashMap.get(epicId).getId() == epicId) {
             subTask = SubTask.create(subTask, ++taskId);
@@ -59,7 +56,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public Task createTask(Task task) throws IOException, ManagerSaveException {
+    public Task createTask(Task task) {
         if (!taskHashMap.isEmpty()) {
             for (int i : taskHashMap.keySet()) {
                 if (taskHashMap.get(i).getName() == task.getName()) {
@@ -76,7 +73,6 @@ public class InMemoryTaskManager implements TaskManager {
             ++taskId;
             task = Task.create(this.taskId, task);
             this.taskHashMap.put(taskId, task);
-            //this.taskHashMap.put(++taskId, Task.create(this.taskId, task));
         }
         return task;
     }

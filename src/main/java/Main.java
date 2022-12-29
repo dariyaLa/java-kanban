@@ -1,4 +1,3 @@
-import ru.yandex.praktikum.exception.ManagerSaveException;
 import ru.yandex.praktikum.models.Status;
 import ru.yandex.praktikum.taskManager.FileBackedTasksManager;
 import ru.yandex.praktikum.taskManager.TaskManager;
@@ -26,8 +25,8 @@ public class Main {
         TaskManager taskManager = Managers.getDefault();
         FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager();
         FileBackedTasksManager fileBackedTasksManagerFromFile = new FileBackedTasksManager();
-        FileReader fileReader = new FileReader("file.csv");
-        Writer fileWriter = new FileWriter("file.csv", true);
+        //FileReader fileReader = new FileReader("file.csv");
+        //Writer fileWriter = new FileWriter("file.csv", true);
 
         while (true) {
             // обаботка разных случаев
@@ -101,9 +100,8 @@ public class Main {
                 System.out.println("Для истории получен эпик по идентификатору");
                 FileBackedTasksManager.historyToString(fileBackedTasksManager.getInMemoryHistoryManagerDefault());
                 System.out.println("История записана в файл");
-                FileBackedTasksManager.getFileWriter().close();
             } else if (userInput == 12) {
-                FileBackedTasksManager.loadFromFile(fileReader, fileBackedTasksManagerFromFile);
+                FileBackedTasksManager.loadFromFile(new FileReader("file.csv"), fileBackedTasksManagerFromFile);
                 System.out.println("Задачи считаны из файла");
             } else if (userInput == 13) {
                 System.out.println("История считана из файла");
