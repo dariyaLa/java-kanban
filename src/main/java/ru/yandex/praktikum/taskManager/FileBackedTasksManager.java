@@ -88,12 +88,12 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 try {
                     fileWriter.write(Integer.toString(x.getId()));
                     fileWriter.write(",");
+                } catch (ManagerSaveException e) {
+                    System.out.println("Ошибка записи в файл");
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    throw new RuntimeException(e);
                 }
             });
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 
