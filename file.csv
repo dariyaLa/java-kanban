@@ -1,0 +1,7 @@
+id,type,name,status,description,epic,startTime,duration
+EPIC,Эпик 1,1,NEW,Эпик 1 Описание,2022-02-20T10:00,PT1H
+SUBTASK,Подзадача 1,2,NEW,Подзадача 1 Описание,1,2022-02-20T11:00,PT1H
+SUBTASK,Подзадача 2,3,NEW,Подзадача 2 Описание,1,2022-02-20T10:00,PT1H
+TASK,Задача 1,4,NEW,Описание задачи 1,2022-02-20T12:00,PT1H
+
+1,

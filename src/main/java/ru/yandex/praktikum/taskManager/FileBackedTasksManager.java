@@ -1,6 +1,7 @@
 package ru.yandex.praktikum.taskManager;
 
 import ru.yandex.praktikum.exception.ManagerSaveException;
+import ru.yandex.praktikum.exception.NotFoundExeption;
 import ru.yandex.praktikum.history.HistoryManager;
 import ru.yandex.praktikum.models.Status;
 import ru.yandex.praktikum.models.Tasks;
@@ -9,6 +10,8 @@ import ru.yandex.praktikum.tasks.SubTask;
 import ru.yandex.praktikum.tasks.Task;
 
 import java.io.*;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 
@@ -20,7 +23,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     @Override
-    public SubTask createSubTask(SubTask subtask) {
+    public SubTask createSubTask(SubTask subtask) throws NotFoundExeption {
         subtask = super.createSubTask(subtask);
         save(subTaskToString(subtask));
         return subtask;
@@ -34,7 +37,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     @Override
-    public Task createTask(Task task) {
+    public Task createTask(Task task) throws NotFoundExeption {
         task = super.createTask(task);
         save(taskToString(task));
         return task;
@@ -56,6 +59,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 + "," + subTask.getStatus()
                 + "," + subTask.getDiscription()
                 + "," + subTask.getEpicId()
+                + "," + subTask.getStartTime()
+                + "," + subTask.getDuration()
                 + "\n";
     }
 
@@ -64,6 +69,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         return tasksToString = tasksToString + task.getId() + "," + Tasks.TASK + "," + task.getName()
                 + "," + task.getStatus()
                 + "," + task.getDiscription()
+                + "," + task.getStartTime()
+                + "," + task.getDuration()
                 + "\n";
     }
 
@@ -72,12 +79,14 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         return tasksToString = tasksToString + epic.getId() + "," + Tasks.EPIC + "," + epic.getName()
                 + "," + epic.getStatus()
                 + "," + epic.getDiscription()
+                + "," + epic.getStartTime()
+                + "," + epic.getDuration()
                 + "\n";
     }
 
     @Override
-    public Epic getEpicById(List<Epic> epicList, int taskId) {
-        return super.getEpicById(epicList, taskId);
+    public Epic getEpicById(int taskId) throws NotFoundExeption {
+        return super.getEpicById(taskId);
     }
 
     //записываем историю в файл
@@ -98,7 +107,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     //создаем менеджера из файла (читаем файл)
-    public static void fromString(TaskManager taskManager, FileReader fileReader) throws IOException {
+    public static void fromString(TaskManager taskManager, FileReader fileReader) throws IOException, NotFoundExeption {
         HashMap<Integer, Epic> epicHashMap = taskManager.setEpicHashMap();
         HashMap<Integer, SubTask> subTaskHashMap = taskManager.setSubTaskHashMap();
         HashMap<Integer, Task> taskHashMap = taskManager.setTaskHashMap();
@@ -109,19 +118,27 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
                 if (line.contains(",") && !isStartHistory) {
                     String[] lineSplit = line.split(",");
-                    if (Tasks.getTask(lineSplit[1]) != null) {
-                        switch (Tasks.valueOf(lineSplit[1])) {
+                    if (Tasks.getTask(lineSplit[0]) != null) {
+                        switch (Tasks.valueOf(lineSplit[0])) {
                             case EPIC:
-                                epicHashMap.put(Integer.valueOf(lineSplit[0]), new Epic(lineSplit[2], lineSplit[4],
-                                        Integer.valueOf(lineSplit[0]), null, Status.valueOf(lineSplit[3])));
+                                Epic epic = new Epic(lineSplit[1], lineSplit[4],
+                                        Integer.valueOf(lineSplit[2]), null, Status.valueOf(lineSplit[3]),
+                                        LocalDateTime.parse(lineSplit[5]), Duration.parse(lineSplit[6]));
+                            epicHashMap.put(Integer.valueOf(lineSplit[2]), epic);
                                 break;
                             case SUBTASK:
-                                subTaskHashMap.put(Integer.valueOf(lineSplit[0]), new SubTask(lineSplit[2], lineSplit[4],
-                                        Integer.valueOf(lineSplit[0]), Status.valueOf(lineSplit[3]), Integer.valueOf(lineSplit[5])));
+                                SubTask subTask = new SubTask(lineSplit[1], lineSplit[4],
+                                        Integer.valueOf(lineSplit[2]), Status.valueOf(lineSplit[3]), Integer.valueOf(lineSplit[5]),
+                                        LocalDateTime.parse(lineSplit[6]), Duration.parse(lineSplit[7]));
+                                subTaskHashMap.put(Integer.valueOf(lineSplit[2]), subTask);
+                                prioritizedTasks(subTask);
                                 break;
                             case TASK:
-                                taskHashMap.put(Integer.valueOf(lineSplit[0]), new Task(lineSplit[2], lineSplit[4],
-                                        Integer.valueOf(lineSplit[0]), Status.valueOf(lineSplit[3])));
+                                Task task = new Task(lineSplit[1], lineSplit[4],
+                                        Integer.valueOf(lineSplit[2]), Status.valueOf(lineSplit[3]),
+                                        LocalDateTime.parse(lineSplit[5]), Duration.parse(lineSplit[6]));
+                                taskHashMap.put(Integer.valueOf(lineSplit[2]), task);
+                                prioritizedTasks(task);
                                 break;
                         }
                     }
@@ -129,7 +146,31 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                     break;
                 }
             }
+
         }
+        taskManager.getSubTaskHashMap().stream().forEach(p-> {
+            int epic_id = p.getEpicId();
+            Epic epic = null;
+            try {
+                epic = taskManager.getEpicById(epic_id);
+            } catch (NotFoundExeption e) {
+                e.printStackTrace();
+            }
+            epic.getSubTaskList().add(p);
+        });
+
+        historyFromString(taskManager);
+    }
+
+    //сведение эпиков и сабтасков из файла
+    public void addSubTaskInEpicFile(TaskManager taskManager) throws NotFoundExeption {
+        taskManager.getSubTaskHashMap().stream().forEach(p-> {
+            try {
+                taskManager.getEpicById(p.getEpicId()).getSubTaskList().add(p);
+            } catch (NotFoundExeption e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     //Восстановление истории из файла
@@ -148,8 +189,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                     String[] lineSplit = line.split(",");
 
                     for (String lineTemp : lineSplit) {
-                        if (taskManager.getEpicById(taskManager.getEpicHashMap(), Integer.valueOf(lineTemp)) != null) {
-                            Task task = taskManager.getEpicById(taskManager.getEpicHashMap(), Integer.valueOf(lineTemp));
+                        if (taskManager.getEpicById(Integer.valueOf(lineTemp)) != null) {
+                            Task task = taskManager.getEpicById(Integer.valueOf(lineTemp));
                             taskManager.getInMemoryHistoryManagerDefault().add(task);
                         } else if (taskManager.getTaskById(Integer.valueOf(lineTemp)) != null) {
                             Task task = taskManager.getTaskById(Integer.valueOf(lineTemp));
@@ -162,11 +203,14 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                     isStartHistory = false;
                 }
             }
+        } catch (NotFoundExeption notFoundExeption) {
+            notFoundExeption.printStackTrace();
         }
         return taskManager.getInMemoryHistoryManager();
     }
 
-    public static void loadFromFile(FileReader fileReader, FileBackedTasksManager fileBackedTasksManager) throws IOException {
+    public static void loadFromFile(FileReader fileReader, FileBackedTasksManager fileBackedTasksManager) throws IOException, NotFoundExeption {
         fromString(fileBackedTasksManager, fileReader);
+
     }
 }
