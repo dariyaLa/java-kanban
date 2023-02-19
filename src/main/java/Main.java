@@ -1,3 +1,4 @@
+import ru.yandex.praktikum.exception.NotFoundExeption;
 import ru.yandex.praktikum.models.Status;
 import ru.yandex.praktikum.taskManager.FileBackedTasksManager;
 import ru.yandex.praktikum.taskManager.TaskManager;
@@ -7,26 +8,53 @@ import ru.yandex.praktikum.tasks.Task;
 import ru.yandex.praktikum.utilits.Managers;
 
 import java.io.*;
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Scanner;
 
 public class Main {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, NotFoundExeption {
 
         Scanner scanner = new Scanner(System.in);
-        Epic epic = new Epic("Эпик 1", "Эпик 1 Описание");
-        Epic epic2 = new Epic("Эпик 1", "Эпик 1 Описание");
-        SubTask subTaskOneEpicOne = new SubTask("Подзадача 1", "Подзадача 1 Описание", 1);
-        SubTask subTaskTwoEpicOne = new SubTask("Подзадача 2", "Подзадача 2 Описание", 1);
-        SubTask subTaskThreeEpicOne = new SubTask("Подзадача 3", "Подзадача 3 Описание", 1);
+        Epic epic = new Epic("Эпик 1", "Эпик 1 Описание",
+                LocalDateTime.of(LocalDate.of(2022, 2, 20),
+                        LocalTime.of(10, 0)), Duration.ofMinutes(60));
+
+        Epic epic2 = new Epic("Эпик 2", "Эпик 2 Описание",
+                LocalDateTime.of(LocalDate.of(2022, 2, 20),
+                        LocalTime.of(10, 0)), Duration.ofMinutes(60));
+
+        SubTask subTaskOneEpicOne = new SubTask("Подзадача 1", "Подзадача 1 Описание", 1,
+                LocalDateTime.of(LocalDate.of(2022, 2, 20),
+                        LocalTime.of(10, 0)), Duration.ofMinutes(60));
+        SubTask subTaskTwoEpicOne = new SubTask("Подзадача 2", "Подзадача 2 Описание", 1,
+                LocalDateTime.of(LocalDate.of(2022, 2, 20),
+                        LocalTime.of(11, 0)), Duration.ofMinutes(60));
+        SubTask subTaskThreeEpicOne = new SubTask("Подзадача 3", "Подзадача 3 Описание", 1,
+                LocalDateTime.of(LocalDate.of(2022, 2, 20),
+                        LocalTime.of(10, 0)), Duration.ofMinutes(60));
+        SubTask subTaskForEpicOne = new SubTask("Подзадача 4", "Подзадача 4 Описание", 1,
+                LocalDateTime.of(LocalDate.of(2022, 2, 20),
+                        LocalTime.of(10, 20)), Duration.ofMinutes(20));
+        SubTask subTaskNotStartTimeEpicOne = new SubTask("Подзадача 5", "Подзадача 5 Описание", 1,
+                null, Duration.ofMinutes(60));
+
         SubTask subTaskTwoUpdate = new SubTask();
-        Task task = new Task("Задача 1", "Описание задачи 1");
-        SubTask taskUpdate = new SubTask("Задача 1", "Описание задачи 1 обновленное", 3, Status.NEW, 1);
+
+        Task task = new Task("Задача 1", "Описание задачи 1",
+                LocalDateTime.of(LocalDate.of(2022, 2, 20), LocalTime.of(12, 0)), Duration.ofMinutes(60));
+        Task taskTwo = new Task("Задача 2", "Описание задачи 2",
+                LocalDateTime.of(LocalDate.of(2022, 2, 20), LocalTime.of(12, 0)), Duration.ofMinutes(60));
+
+        SubTask taskUpdate = new SubTask("Задача 1", "Описание задачи 1 обновленное", 3, Status.NEW, 1,
+                LocalDateTime.of(LocalDate.of(2022, 2, 20),
+                        LocalTime.of(10, 0)), Duration.ofMinutes(60));
         TaskManager taskManager = Managers.getDefault();
         FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager();
         FileBackedTasksManager fileBackedTasksManagerFromFile = new FileBackedTasksManager();
-        //FileReader fileReader = new FileReader("file.csv");
-        //Writer fileWriter = new FileWriter("file.csv", true);
 
         while (true) {
             // обаботка разных случаев
@@ -48,16 +76,20 @@ public class Main {
             } else if (userInput == 3) {
                 System.out.println("Введите идентификатор задачи, которую хотите получить");
                 userInput = scanner.nextInt();
-                System.out.println(taskManager.getEpicById(taskManager.getEpicHashMap(), userInput));
+                System.out.println(taskManager.getEpicByIdClient(userInput));
             } else if (userInput == 4) {
                 taskManager.createEpic(epic);
                 System.out.println("Эпик создан");
-                taskManager.createEpic(epic2);
+                //taskManager.createEpic(epic2);
                 taskManager.createSubTask(subTaskOneEpicOne);
                 taskManager.createSubTask(subTaskTwoEpicOne);
                 taskManager.createSubTask(subTaskThreeEpicOne);
+                taskManager.createSubTask(subTaskNotStartTimeEpicOne);
+                taskManager.createSubTask(subTaskForEpicOne);
+
                 System.out.println("Подзадачи созданы");
                 taskManager.createTask(task);
+                taskManager.createTask(taskTwo);
                 System.out.println("Зачада создана");
             } else if (userInput == 5) {
                 System.out.println("Обновление подзадачи");
@@ -82,7 +114,7 @@ public class Main {
             } else if (userInput == 8) {
                 System.out.println("Введите идентификатор эпика, для получения списка его подзадач");
                 userInput = scanner.nextInt();
-                System.out.println(taskManager.getSubTaskEpic(taskManager.getEpicHashMap(), userInput));
+                System.out.println(taskManager.getSubTaskEpic(userInput));
             } else if (userInput == 9) {
                 System.out.println("Тестирование истории");
                 System.out.println(taskManager.getInMemoryHistoryManager());
@@ -92,20 +124,29 @@ public class Main {
                 System.out.println(taskManager.getSubTaskById(userInput));
             } else if (userInput == 11) {
                 fileBackedTasksManager.createEpic(epic);
-                fileBackedTasksManager.createTask(task);
                 fileBackedTasksManager.createSubTask(subTaskOneEpicOne);
+                fileBackedTasksManager.createSubTask(subTaskOneEpicOne);
+                fileBackedTasksManager.createTask(task);
                 System.out.println("Созданы эпик, подзадача, задача");
                 System.out.println("Все задачи записаны в файл");
-                System.out.println(fileBackedTasksManager.getEpicById(fileBackedTasksManager.getEpicHashMap(), 1));
+                System.out.println(fileBackedTasksManager.getEpicById(1));
                 System.out.println("Для истории получен эпик по идентификатору");
                 FileBackedTasksManager.historyToString(fileBackedTasksManager.getInMemoryHistoryManagerDefault());
                 System.out.println("История записана в файл");
             } else if (userInput == 12) {
                 FileBackedTasksManager.loadFromFile(new FileReader("file.csv"), fileBackedTasksManagerFromFile);
                 System.out.println("Задачи считаны из файла");
+                System.out.println(fileBackedTasksManagerFromFile.getEpicHashMap());
+                System.out.println(fileBackedTasksManagerFromFile.getSubTaskHashMap());
+                System.out.println(fileBackedTasksManagerFromFile.getTaskHashMap());
+
             } else if (userInput == 13) {
                 System.out.println("История считана из файла");
                 System.out.println(FileBackedTasksManager.historyFromString(fileBackedTasksManagerFromFile));
+            } else if (userInput == 14) {
+                System.out.println("Время завершения задачи:" + taskManager.getEndTime(taskManager.foundTask(4)));
+            } else if (userInput == 15) {
+                System.out.println("Приоритезированный список:" + taskManager.getTaskTreeSetPrioritized());
             } else if (userInput == 0) {
                 System.out.println("Выход из приложения");
                 return;
@@ -131,6 +172,8 @@ public class Main {
                 + "11 - Запись в файл;" + "\n" //сделано
                 + "12 - Чтение из файла;" + "\n" //сделано
                 + "13 - Считать историю из файла;" + "\n" //сделано
+                + "14 - Посчитать продолжительность эпика;" + "\n" //сделано
+                + "15 - Вывести приоритезированный список задач (по startTime);" + "\n" //сделано
                 + "0 - Выйти из приложения.");
     }
 

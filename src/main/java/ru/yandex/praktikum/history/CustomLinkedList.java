@@ -23,29 +23,35 @@ public class CustomLinkedList {
             tail.linkNext = node;
             tail = node;
         }
+        nodeMap.put(task.getId(), node);
         return node;
     }
 
     public void removeNode(int id) {
-        Node node = nodeMap.get(id);
-        Node nodeNext = node.linkNext;
-        Node nodePrev = node.linkPrev;
+        Node nodeNext = null;
+        Node nodePrev = null;
+        if (!nodeMap.isEmpty()) {
+            Node node = nodeMap.get(id);
+            nodeNext = node.linkNext;
+            nodePrev = node.linkPrev;
 
-        if (getTasks().size() != 0) {
-            if (node.linkPrev == null && node.linkNext == null) {
-                head = null;
-                tail = null;
-            } else if (node.linkPrev == null && node.linkNext != null) {
-                nodeNext.linkPrev = null;
-                head = node.linkNext;
-            } else if (node.linkPrev != null && node.linkNext == null) {
-                nodePrev.linkNext = null;
-                tail = node.linkPrev;
-            } else {
-                nodePrev.linkNext = node.linkNext;
-                nodeNext.linkPrev = node.linkPrev;
-                node.linkNext = null;
-                node.linkPrev = null;
+
+            if (getTasks().size() != 0) {
+                if (node.linkPrev == null && node.linkNext == null) {
+                    head = null;
+                    tail = null;
+                } else if (node.linkPrev == null && node.linkNext != null) {
+                    nodeNext.linkPrev = null;
+                    head = node.linkNext;
+                } else if (node.linkPrev != null && node.linkNext == null) {
+                    nodePrev.linkNext = null;
+                    tail = node.linkPrev;
+                } else {
+                    nodePrev.linkNext = node.linkNext;
+                    nodeNext.linkPrev = node.linkPrev;
+                    node.linkNext = null;
+                    node.linkPrev = null;
+                }
             }
         }
     }
@@ -62,6 +68,9 @@ public class CustomLinkedList {
     }
 
     public Map<Integer, Node> getNodeMap() {
+       // if (nodeMap.isEmpty()) {
+       //     return null;
+       // }
         return nodeMap;
     }
 

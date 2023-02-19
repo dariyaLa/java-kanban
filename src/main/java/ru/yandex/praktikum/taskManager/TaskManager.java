@@ -1,21 +1,29 @@
 package ru.yandex.praktikum.taskManager;
 
+import ru.yandex.praktikum.exception.NotFoundExeption;
 import ru.yandex.praktikum.history.HistoryManager;
 import ru.yandex.praktikum.models.Status;
 import ru.yandex.praktikum.tasks.Epic;
 import ru.yandex.praktikum.tasks.SubTask;
 import ru.yandex.praktikum.tasks.Task;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.List;
+import java.util.TreeSet;
 
 public interface TaskManager {
 
+    LocalDateTime START_TIME_NOT_SET = LocalDateTime.of(LocalDate.of(1, 1, 1),
+            LocalTime.of(0, 0));
+
     Epic createEpic(Epic epic);
 
-    SubTask createSubTask(SubTask subTask);
+    SubTask createSubTask(SubTask subTask) throws NotFoundExeption;
 
-    Task createTask(Task task);
+    Task createTask(Task task) throws NotFoundExeption;
 
     void removeTasks();
 
@@ -23,16 +31,10 @@ public interface TaskManager {
 
     void removeAllEpics();
 
-    void removeEpicId(int taskId);
-
-    //чистим хешмапу сабтасков от удаленных сабтасков
-    void removeSubTasksHashMap(List<SubTask> subTaskList);
-
-    //обновляем лист подзадач в эпике
-    HashMap<Integer, Epic> updateListSubTaskEpic(SubTask subTask);
+    void removeEpicId(int taskId) throws NotFoundExeption;
 
     //возвращаем список подзадач эпика
-    List<SubTask> getSubTaskEpic(List<Epic> epicList, int epicId);
+    List<SubTask> getSubTaskEpic(int epicId);
 
     //удаление подзадачи в листе подзадач эпика
     HashMap<Integer, Epic> removeTaskSubTaskListEpic(int taskId);
@@ -56,10 +58,10 @@ public interface TaskManager {
     SubTask getSubTaskById(int taskId);
 
     //получаем задачу по идентификатору
-    Task getTaskById(int taskId);
+    Task getTaskById(int taskId) throws NotFoundExeption;
 
     //получаем эпик по идентификатору
-    Epic getEpicById(List<Epic> epicList, int taskId);
+    Epic getEpicByIdClient(int taskId);
 
     List<Epic> getEpicHashMap();
 
@@ -76,4 +78,12 @@ public interface TaskManager {
     HashMap<Integer, Task> setTaskHashMap();
 
     HistoryManager getInMemoryHistoryManagerDefault();
+
+    LocalDateTime getEndTime(Task task);
+
+    Task foundTask(int id);
+
+    TreeSet<Task> getTaskTreeSetPrioritized();
+
+    Epic getEpicById(int epic_id) throws NotFoundExeption;
 }

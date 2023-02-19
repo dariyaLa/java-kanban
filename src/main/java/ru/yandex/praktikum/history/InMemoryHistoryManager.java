@@ -10,10 +10,17 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public void add(Task task) {
-        if (customLinkedList.getNodeMap().get(task.getId()) != null) {
-            remove(task.getId());
+        if (customLinkedList.getNodeMap() != null) {           //&& customLinkedList.getNodeMap().get(task.getId()) != null
+            removeTask(task.getId());
+            if (customLinkedList.getNodeMap() != null) { //если после удаления список снова пуст
+                customLinkedList.getNodeMap().put(task.getId(), customLinkedList.linkLast(task));
+            }
         }
-        customLinkedList.getNodeMap().put(task.getId(), customLinkedList.linkLast(task));
+        if (customLinkedList.getNodeMap() == null) {
+            customLinkedList.linkLast(task);
+            //customLinkedList.getNodeMap().put(task.getId(), customLinkedList.linkLast(task));
+        }
+
     }
 
     @Override
@@ -22,8 +29,14 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
     @Override
-    public void remove(int id) {
-        customLinkedList.removeNode(id);
-        customLinkedList.getNodeMap().remove(id);
+    public void removeTask(int id) {
+        if (customLinkedList.getNodeMap().size() !=0 ) {
+            if (customLinkedList.getNodeMap().get(id) != null) {
+                customLinkedList.removeNode(id);
+                if (customLinkedList.getNodeMap() != null) {
+                    customLinkedList.getNodeMap().remove(id);
+                }
+            }
+        }
     }
 }
