@@ -17,7 +17,7 @@ public class InMemoryTaskManager implements TaskManager {
     private HashMap<Integer, Epic> epicHashMap = new HashMap<>();
     private HashMap<Integer, SubTask> subTaskHashMap = new HashMap<>();
     private HashMap<Integer, Task> taskHashMap = new HashMap<>();
-    private HistoryManager inMemoryHistoryManager = Managers.getDefaultHistory();
+    protected HistoryManager inMemoryHistoryManager = Managers.getDefaultHistory();
     static TaskComparator taskComparator = new TaskComparator();
     private static TreeSet<Task> taskTreeSetPrioritized = new TreeSet<>(taskComparator);
 
@@ -46,6 +46,23 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
+    public void createEpicAllFields(Epic epic) {
+        if (!epicHashMap.isEmpty()) {
+            for (int i : epicHashMap.keySet()) {
+                if (epicHashMap.get(i).getName() == epic.getName()) {
+                    System.out.println("Эпик с таким наименованием уже существует");
+                    break;
+                } else {
+                    this.epicHashMap.put(taskId, epic);
+                    break;
+                }
+            }
+        } else {
+            this.epicHashMap.put(taskId, epic);
+        }
+    }
+
+    @Override
     public SubTask createSubTask(SubTask subTask) throws NotFoundExeption {
         validateStartTimeSubTask(subTask);
         int epicId = subTask.getEpicId();
@@ -53,9 +70,21 @@ public class InMemoryTaskManager implements TaskManager {
             subTask = SubTask.create(subTask, ++taskId);
             subTaskHashMap.put(taskId, subTask);
             epicHashMap.get(epicId).getSubTaskList().add(subTask);
+            epicHashMap.get(epicId).calculationStartEndDurationEpic();
         }
         prioritizedTasks(subTask);
         return subTask;
+    }
+
+    @Override
+    public void createSubTaskAllFields(SubTask subTask) {
+        validateStartTimeSubTask(subTask);
+        int epicId = subTask.getEpicId();
+        if (epicHashMap.get(epicId).getId() == epicId) {
+            subTaskHashMap.put(subTask.getId(), subTask);
+            epicHashMap.get(epicId).getSubTaskList().add(subTask);
+        }
+        prioritizedTasks(subTask);
     }
 
     @Override
@@ -80,6 +109,25 @@ public class InMemoryTaskManager implements TaskManager {
         }
         prioritizedTasks(task); //добавляем к приоритезированному списку
         return task;
+    }
+
+    @Override
+    public void createTaskAllFields(Task task) {
+        validateStartTimeTask(task);
+        if (!taskHashMap.isEmpty()) {
+            for (int i : taskHashMap.keySet()) {
+                if (taskHashMap.get(i).getName() == task.getName()) {
+                    System.out.println("Задача с таким наименованием уже существует");
+                    break;
+                } else {
+                    this.taskHashMap.put(task.getId(), task);
+                    break;
+                }
+            }
+        } else {
+            this.taskHashMap.put(task.getId(), task);
+        }
+        prioritizedTasks(task); //добавляем к приоритезированному списку
     }
 
     @Override
@@ -121,7 +169,6 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void removeEpicId(int taskId) throws NotFoundExeption {
         if (epicHashMap.isEmpty() || epicHashMap.get(taskId) == null) {
-            //System.out.println("Эпик не создан или удален");
             throw new NotFoundExeption();
         } else {
             if (!epicHashMap.get(taskId).getSubTaskList().isEmpty()) {
@@ -177,7 +224,7 @@ public class InMemoryTaskManager implements TaskManager {
     //возвращаем список подзадач эпика
     @Override
     public List<SubTask> getSubTaskEpic(int epicId) {
-        for (Epic j : getEpicHashMap()) {
+        for (Epic j : getEpicHashMapList()) {
             if (j.getId() == epicId) {
                 return j.getSubTaskList();
             }
@@ -277,7 +324,6 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Task getTaskById(int taskId) throws NotFoundExeption {
         if (taskHashMap.isEmpty() || taskHashMap.get(taskId) == null) {
-            //System.out.println("Эпик не создан или удален");
             throw new NotFoundExeption();
         } else {
             inMemoryHistoryManager.add(taskHashMap.get(taskId));
@@ -287,8 +333,8 @@ public class InMemoryTaskManager implements TaskManager {
 
     //клиет получает эпик по идентификатору
     @Override
-    public Epic getEpicByIdClient(int taskId){
-        for (Epic i : getEpicHashMap()) {
+    public Epic getEpicByIdClient(int taskId) {
+        for (Epic i : getEpicHashMapList()) {
             if (i.getId() == taskId) {
                 inMemoryHistoryManager.add(i);
                 return i;
@@ -299,7 +345,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     //получаем эпик по идентификатору
     public Epic getEpicById(int taskId) throws NotFoundExeption {
-        for (Epic i : getEpicHashMap()) {
+        for (Epic i : getEpicHashMapList()) {
             if (i.getId() == taskId) {
                 return i;
             }
@@ -308,7 +354,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public List<Epic> getEpicHashMap(){
+    public List<Epic> getEpicHashMapList() {
         if (epicHashMap.isEmpty()) {
             ArrayList<Epic> taskArrayList = new ArrayList<>();
             return taskArrayList;
@@ -318,8 +364,13 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
+    public HashMap<Integer, Epic> getEpicHashMap() {
+        return epicHashMap;
+    }
+
+
     @Override
-    public List<SubTask> getSubTaskHashMap() {
+    public List<SubTask> getSubTaskHashMapList() {
         if (subTaskHashMap.isEmpty()) {
             ArrayList<SubTask> taskArrayList = new ArrayList<>();
             return taskArrayList;
@@ -329,8 +380,12 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
+    public HashMap<Integer, SubTask> getSubTaskHashMap() {
+        return subTaskHashMap;
+    }
+
     @Override
-    public List<Task> getTaskHashMap() {
+    public List<Task> getTaskHashMapList() {
         if (taskHashMap.isEmpty()) {
             ArrayList<Task> taskArrayList = new ArrayList<>();
             return taskArrayList;
@@ -338,6 +393,10 @@ public class InMemoryTaskManager implements TaskManager {
             ArrayList<Task> taskArrayList = new ArrayList<>(taskHashMap.values());
             return taskArrayList;
         }
+    }
+
+    public HashMap<Integer, Task> getTaskHashMap() {
+        return taskHashMap;
     }
 
     @Override
@@ -348,28 +407,7 @@ public class InMemoryTaskManager implements TaskManager {
     //рассчитываем время завершения задачи
     @Override
     public LocalDateTime getEndTime(Task task) {
-
-        if (task instanceof Epic) {
-            return calculationStartEndDurationEpic((Epic) task).getEndTime();
-        } else {
-            return task.getStartTime().plus(task.getDuration());
-        }
-    }
-
-    public Epic calculationStartEndDurationEpic(Epic epic) {
-        List<SubTask> tempList = epic.getSubTaskList();
-        SubTask[] tempMasSubtasks = tempList.toArray(new SubTask[0]);
-
-        Arrays.sort(tempMasSubtasks, (first, second) -> {
-            if (first.getStartTime().isBefore(second.getStartTime())) {
-                return -1;
-            } else return 0;
-        });
-        //устанавливаем время начала эпика из первой задачи отсортированного списка
-        epic.setStartTime(tempMasSubtasks[0].getStartTime());
-        //устанавливаем время конца эпика из последней задачи отсортированного списка
-        epic.setEndTime(getEndTime(tempMasSubtasks[tempMasSubtasks.length - 1]));
-        return epic;
+        return task.getStartTime().plus(task.getDuration());
     }
 
     public static void prioritizedTasks(Task task) {
@@ -378,7 +416,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     public void validateStartTimeSubTask(Task task) {
         if (!getSubTaskHashMap().isEmpty()) {
-            List<Task> crossTask = getSubTaskHashMap().stream()
+            List<Task> crossTask = getSubTaskHashMapList().stream()
                     .filter(t -> task.getStartTime().isAfter(t.getStartTime())
                             && task.getStartTime().isBefore(getEndTimeSubTaskAndTask(t))
                             || t.getStartTime().isEqual(task.getStartTime()))
@@ -390,19 +428,20 @@ public class InMemoryTaskManager implements TaskManager {
             }
         }
     }
-    public void validateStartTimeTask(Task task) throws NotFoundExeption {
-            if (!getTaskHashMap().isEmpty()) {
-                List<Task> crossTask = getTaskHashMap().stream()
-                        .filter(t -> task.getStartTime().isAfter(t.getStartTime())
-                                && task.getStartTime().isBefore(getEndTimeSubTaskAndTask(t))
-                                || t.getStartTime().isEqual(task.getStartTime()))
-                        .collect(Collectors.toList());
 
-                if (!crossTask.isEmpty()) {
-                    System.out.println("Задача \"" + task.getName() +
-                            "\" имеет пересечение по времени с задачами с ID" + crossTask.stream().map(Task::getId).collect(Collectors.toList()));
-                }
+    public void validateStartTimeTask(Task task) {
+        if (!getTaskHashMap().isEmpty()) {
+            List<Task> crossTask = getTaskHashMapList().stream()
+                    .filter(t -> task.getStartTime().isAfter(t.getStartTime())
+                            && task.getStartTime().isBefore(getEndTimeSubTaskAndTask(t))
+                            || t.getStartTime().isEqual(task.getStartTime()))
+                    .collect(Collectors.toList());
+
+            if (!crossTask.isEmpty()) {
+                System.out.println("Задача \"" + task.getName() +
+                        "\" имеет пересечение по времени с задачами с ID" + crossTask.stream().map(Task::getId).collect(Collectors.toList()));
             }
+        }
     }
 
     public LocalDateTime getEndTimeSubTaskAndTask(Task task) {
