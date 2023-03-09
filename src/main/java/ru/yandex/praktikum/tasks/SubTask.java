@@ -10,7 +10,7 @@ public class SubTask extends Task {
 
     private int epicId;
 
-    public SubTask(String name, String discription, int id, Enum status, int epicId, LocalDateTime startTime, Duration duration) {
+    public SubTask(String name, String discription, int id, Status status, int epicId, LocalDateTime startTime, Duration duration) {
         super(name, discription, id, status, startTime, duration);
         this.epicId = epicId;
     }
@@ -21,6 +21,7 @@ public class SubTask extends Task {
     }
 
     public SubTask() {
+
     }
 
     public static SubTask create(SubTask subTask, int subTaskId) {
@@ -63,6 +64,4 @@ public class SubTask extends Task {
     public int hashCode() {
         return Objects.hash(super.hashCode(), epicId);
     }
-
-
 }

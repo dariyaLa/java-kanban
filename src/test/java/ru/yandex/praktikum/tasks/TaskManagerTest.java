@@ -49,15 +49,15 @@ abstract public class TaskManagerTest<T extends TaskManager> {
         return expectedSubTaskList;
     }
 
-    public abstract TaskManager getManager() throws IOException, NotFoundExeption;
+    public abstract TaskManager getManager() throws IOException, NotFoundExeption, InterruptedException;
 
     //успешное создание задачи
     @Test
-    protected void createTaskTest() throws NotFoundExeption, IOException {
+    protected void createTaskTest() throws NotFoundExeption, IOException, InterruptedException {
         TaskManager manager = getManager();
         int INDEX_TASK = 0;
-        Task task = manager.getTaskById(manager.getTaskHashMap().get(INDEX_TASK).getId());
-        List<Task> tasks = manager.getTaskHashMap();
+        Task task = manager.getTaskById(manager.getTaskHashMapList().get(INDEX_TASK).getId());
+        List<Task> tasks = manager.getTaskHashMapList();
 
 
         assertNotNull(task, "Задача не найдена.");
@@ -70,11 +70,11 @@ abstract public class TaskManagerTest<T extends TaskManager> {
 
     //успешное создание эпика
     @Test
-    protected void createEpicTest() throws NotFoundExeption, IOException {
+    protected void createEpicTest() throws NotFoundExeption, IOException, InterruptedException {
         TaskManager manager = getManager();
         int INDEX_TASK = 0;
-        Epic epic = manager.getEpicHashMap().get(INDEX_TASK);
-        List<Epic> epicList = manager.getEpicHashMap();
+        Epic epic = manager.getEpicHashMapList().get(INDEX_TASK);
+        List<Epic> epicList = manager.getEpicHashMapList();
 
         assertNotNull(epic, "Эпик не найден.");
         assertEquals(expectedEpic, epic, "Эпики не совпадают.");
@@ -109,11 +109,11 @@ abstract public class TaskManagerTest<T extends TaskManager> {
 
     //успешное создание подзадачи
     @Test
-    protected void createSubTaskTest() throws NotFoundExeption, IOException {
+    protected void createSubTaskTest() throws NotFoundExeption, IOException, InterruptedException {
         TaskManager manager = getManager();
         final int INDEX_TASK = 0;
-        final SubTask subTask = manager.getSubTaskHashMap().get(INDEX_TASK);
-        final List<SubTask> subTaskList = manager.getSubTaskHashMap();
+        final SubTask subTask = manager.getSubTaskHashMapList().get(INDEX_TASK);
+        final List<SubTask> subTaskList = manager.getSubTaskHashMapList();
 
         assertNotNull(subTask, "Подзадача не найдена.");
         assertEquals(expectedSubTaskOne, subTask, "Подзадачи не совпадают.");
@@ -126,7 +126,7 @@ abstract public class TaskManagerTest<T extends TaskManager> {
 
     //удаление эпика по id
     @Test
-    protected void removeEpicId() throws NotFoundExeption, IOException {
+    protected void removeEpicId() throws NotFoundExeption, IOException, InterruptedException {
         final int EPIC_ID = 1;
         TaskManager manager = getManager();
         manager.removeEpicId(EPIC_ID);
@@ -135,7 +135,7 @@ abstract public class TaskManagerTest<T extends TaskManager> {
 
     //удаление подзадачи по id
     @Test
-    protected void removeSubTaskId() throws NotFoundExeption, IOException {
+    protected void removeSubTaskId() throws NotFoundExeption, IOException, InterruptedException {
         final int SUBTASK_ID = 2;
         final int EPIC_ID = 1;
         List<SubTask> expectedListSubtask;
@@ -156,7 +156,7 @@ abstract public class TaskManagerTest<T extends TaskManager> {
 
     //удаление задачи по id
     @Test
-    protected void removeTaskIdTest() throws NotFoundExeption, IOException {
+    protected void removeTaskIdTest() throws NotFoundExeption, IOException, InterruptedException {
         final int TASK_ID = 4;
         TaskManager manager = getManager();
         NotFoundExeption exception = assertThrows(NotFoundExeption.class, () -> {
@@ -169,7 +169,7 @@ abstract public class TaskManagerTest<T extends TaskManager> {
 
     //удаление эпика по id, id не существует
     @Test
-    protected void removeEpicFictiveIdTest() throws NotFoundExeption, IOException {
+    protected void removeEpicFictiveIdTest() throws NotFoundExeption, IOException, InterruptedException {
         final int EPIC_ID = 8;
         TaskManager manager = getManager();
 
@@ -189,29 +189,29 @@ abstract public class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    public void removeTasks() throws NotFoundExeption, IOException {
+    public void removeTasks() throws NotFoundExeption, IOException, InterruptedException {
         TaskManager manager = getManager();
         manager.removeTasks();
-        assertEquals(0, manager.getTaskHashMap().size(), "Список задач не пуст");
+        assertEquals(0, manager.getTaskHashMapList().size(), "Список задач не пуст");
     }
 
     @Test
-    public void removeAlLSubTasksTest() throws NotFoundExeption, IOException {
+    public void removeAlLSubTasksTest() throws NotFoundExeption, IOException, InterruptedException {
         TaskManager manager = getManager();
         manager.removeAlLSubTasks();
-        assertEquals(0, manager.getSubTaskHashMap().size(), "Список подзадач не пуст");
+        assertEquals(0, manager.getSubTaskHashMapList().size(), "Список подзадач не пуст");
     }
 
     @Test
-    public void removeAllEpicsTest() throws NotFoundExeption, IOException {
+    public void removeAllEpicsTest() throws NotFoundExeption, IOException, InterruptedException {
         TaskManager manager = getManager();
         manager.removeAllEpics();
-        assertEquals(0, manager.getEpicHashMap().size(), "Список эпиков не пуст");
+        assertEquals(0, manager.getEpicHashMapList().size(), "Список эпиков не пуст");
     }
 
     //список подзадач эпика
     @Test
-    public void getSubTaskEpicTest() throws NotFoundExeption, IOException {
+    public void getSubTaskEpicTest() throws NotFoundExeption, IOException, InterruptedException {
         final int EPIC_ID = 1;
         TaskManager manager = getManager();
         manager.getSubTaskEpic(EPIC_ID);
@@ -220,7 +220,7 @@ abstract public class TaskManagerTest<T extends TaskManager> {
 
     //расчет статуса эпика
     @Test
-    protected void checkStatusEpicTest() throws NotFoundExeption, IOException {
+    protected void checkStatusEpicTest() throws NotFoundExeption, IOException, InterruptedException {
         final int EPIC_ID = 1;
         final int INDEX_SUBTASK1 = 0;
         TaskManager manager = getManager();
@@ -235,7 +235,7 @@ abstract public class TaskManagerTest<T extends TaskManager> {
 
     //проверка истории
     @Test
-    public void getInMemoryHistoryManagerTest() throws NotFoundExeption, IOException {
+    public void getInMemoryHistoryManagerTest() throws NotFoundExeption, IOException, InterruptedException {
         final int EPIC_ID = 1;
         TaskManager manager = getManager();
         manager.getEpicByIdClient(EPIC_ID);
@@ -245,16 +245,16 @@ abstract public class TaskManagerTest<T extends TaskManager> {
 
     //проверка завершения времени
     @Test
-    public void getEndTime() throws NotFoundExeption, IOException {
+    public void getEndTime() throws NotFoundExeption, IOException, InterruptedException {
         final int EPIC_ID = 1;
         final int SUBTASK_ID = 2;
         TaskManager manager = getManager();
-        assertEquals(EXPECTED_END_TIME_EPIC, manager.getEndTime(manager.getEpicById(EPIC_ID)), "Время завершения эпика некорректное");
+        assertEquals(EXPECTED_END_TIME_EPIC, manager.getEpicById(EPIC_ID).getEndTime(), "Время завершения эпика некорректное");
         assertEquals(EXPECTED_END_TIME_SUBTASK, manager.getEndTime(manager.getSubTaskById(SUBTASK_ID)), "Время завершения задачи некорректное");
     }
 
     @Test
-    public void updateSubTaskTest() throws NotFoundExeption, IOException {
+    public void updateSubTaskTest() throws NotFoundExeption, IOException, InterruptedException {
         TaskManager manager = getManager();
         final int SUBTASK_ID = 3;
         final int EPIC_ID = 1;
@@ -268,7 +268,7 @@ abstract public class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    public void getTaskTreeSetPrioritized() throws NotFoundExeption, IOException {
+    public void getTaskTreeSetPrioritized() throws NotFoundExeption, IOException, InterruptedException {
         TaskManager manager = getManager();
         SubTask subTaskNotStartTimeEpicOne = new SubTask("Подзадача 5", "Подзадача 5 Описание", 1,
                 null, Duration.ofMinutes(60));

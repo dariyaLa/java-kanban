@@ -10,16 +10,14 @@ public class Task {
     protected String name;
     protected String discription;
     protected int id;
-    protected Enum status;
+    protected Status status;
     protected Duration duration;
     protected LocalDateTime startTime;
-    protected final LocalDateTime START_TIME_NOT_SET = LocalDateTime.of(LocalDate.of(1, 1, 1),
-            LocalTime.of(0, 0));
 
     public Task() {
     }
 
-    public Task(String name, String discription, int id, Enum status, LocalDateTime startTime, Duration duration) {
+    public Task(String name, String discription, int id, Status status, LocalDateTime startTime, Duration duration) {
         this.name = name;
         this.discription = discription;
         this.id = id;
@@ -33,6 +31,18 @@ public class Task {
         this.discription = discription;
         this.startTime = startTime;
         this.duration = duration;
+    }
+
+    public Task(String name, String discription) {
+        this.name = name;
+        this.discription = discription;
+    }
+
+    public Task(String name, String discription, Status status, LocalDateTime startTime) {
+        this.name = name;
+        this.discription = discription;
+        this.status = status;
+        this.startTime = startTime;
     }
 
     public static Task create(int taskId, Task task) {
@@ -63,11 +73,11 @@ public class Task {
         this.id = id;
     }
 
-    public Enum getStatus() {
+    public Status getStatus() {
         return status;
     }
 
-    public void setStatus(Enum status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 
@@ -85,7 +95,8 @@ public class Task {
 
     public LocalDateTime getStartTime() {
         if (this.startTime == null) {
-            return startTime = START_TIME_NOT_SET;
+            return startTime = LocalDateTime.of(LocalDate.of(1, 1, 1),
+                    LocalTime.of(0, 0));
         } else return startTime;
     }
 

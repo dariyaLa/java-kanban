@@ -21,9 +21,15 @@ public interface TaskManager {
 
     Epic createEpic(Epic epic);
 
+    void createEpicAllFields(Epic epic);
+
     SubTask createSubTask(SubTask subTask) throws NotFoundExeption;
 
+    void createSubTaskAllFields(SubTask subTask) throws NotFoundExeption;
+
     Task createTask(Task task) throws NotFoundExeption;
+
+    void createTaskAllFields(Task task) throws NotFoundExeption;
 
     void removeTasks();
 
@@ -63,11 +69,11 @@ public interface TaskManager {
     //получаем эпик по идентификатору
     Epic getEpicByIdClient(int taskId);
 
-    List<Epic> getEpicHashMap();
+    List<Epic> getEpicHashMapList();
 
-    List<SubTask> getSubTaskHashMap();
+    List<SubTask> getSubTaskHashMapList();
 
-    List<Task> getTaskHashMap();
+    List<Task> getTaskHashMapList();
 
     List<Task> getInMemoryHistoryManager();
 
@@ -83,7 +89,12 @@ public interface TaskManager {
 
     Task foundTask(int id);
 
+    static Task foundTaskStatic(int id) {
+        return null;
+    }
+
     TreeSet<Task> getTaskTreeSetPrioritized();
 
     Epic getEpicById(int epic_id) throws NotFoundExeption;
+    //Epic calculationStartEndDurationEpic(Epic epic);
 }

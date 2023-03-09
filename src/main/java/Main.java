@@ -1,4 +1,5 @@
 import ru.yandex.praktikum.exception.NotFoundExeption;
+import ru.yandex.praktikum.httpService.KVServer;
 import ru.yandex.praktikum.models.Status;
 import ru.yandex.praktikum.taskManager.FileBackedTasksManager;
 import ru.yandex.praktikum.taskManager.TaskManager;
@@ -16,7 +17,7 @@ import java.util.Scanner;
 
 public class Main {
 
-    public static void main(String[] args) throws IOException, NotFoundExeption {
+    public static void main(String[] args) throws IOException, NotFoundExeption, InterruptedException {
 
         Scanner scanner = new Scanner(System.in);
         Epic epic = new Epic("Эпик 1", "Эпик 1 Описание",
@@ -53,8 +54,8 @@ public class Main {
                 LocalDateTime.of(LocalDate.of(2022, 2, 20),
                         LocalTime.of(10, 0)), Duration.ofMinutes(60));
         TaskManager taskManager = Managers.getDefault();
-        FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager();
-        FileBackedTasksManager fileBackedTasksManagerFromFile = new FileBackedTasksManager();
+        String fileNameManager = "file.csv";
+        TaskManager fileBackedTasksManager = Managers.getDefaultFile(fileNameManager);
 
         while (true) {
             // обаботка разных случаев
@@ -62,12 +63,12 @@ public class Main {
             int userInput = scanner.nextInt(); // повторное считывание данных от пользователя
 
             if (userInput == 1) {
-                if (taskManager.getEpicHashMap().isEmpty() && taskManager.getSubTaskHashMap().isEmpty() && taskManager.getTaskHashMap().isEmpty()) {
+                if (taskManager.getEpicHashMapList().isEmpty() && taskManager.getSubTaskHashMapList().isEmpty() && taskManager.getTaskHashMapList().isEmpty()) {
                     System.out.println("Эпики и задачи не созданы или были удалены. Необходимо создать");
                 } else {
-                    System.out.println("Получение списка эпиков: " + taskManager.getEpicHashMap());
-                    System.out.println("Получение списка подзадач: " + taskManager.getSubTaskHashMap());
-                    System.out.println("Получение списка задач: " + taskManager.getTaskHashMap());
+                    System.out.println("Получение списка эпиков: " + taskManager.getEpicHashMapList());
+                    System.out.println("Получение списка подзадач: " + taskManager.getSubTaskHashMapList());
+                    System.out.println("Получение списка задач: " + taskManager.getTaskHashMapList());
                 }
             } else if (userInput == 2) {
                 taskManager.removeTasks();
@@ -100,9 +101,9 @@ public class Main {
                 subTaskTwoUpdate.setId(3);
                 System.out.println(subTaskTwoUpdate);
                 taskManager.updateSubTask(subTaskTwoUpdate);
-                System.out.println(taskManager.getSubTaskHashMap().get(3));
+                System.out.println(taskManager.getSubTaskHashMapList().get(3));
                 taskManager.updateTask(taskUpdate);
-                System.out.println(taskManager.getTaskHashMap());
+                System.out.println(taskManager.getTaskHashMapList());
             } else if (userInput == 6) {
                 System.out.println("Введите идентификатор эпика, который хотите удалить");
                 userInput = scanner.nextInt();
@@ -129,24 +130,43 @@ public class Main {
                 fileBackedTasksManager.createTask(task);
                 System.out.println("Созданы эпик, подзадача, задача");
                 System.out.println("Все задачи записаны в файл");
-                System.out.println(fileBackedTasksManager.getEpicById(1));
+                fileBackedTasksManager.getEpicByIdClient(1);
+                //System.out.println(fileBackedTasksManager.getEpicById(1));
                 System.out.println("Для истории получен эпик по идентификатору");
-                FileBackedTasksManager.historyToString(fileBackedTasksManager.getInMemoryHistoryManagerDefault());
+                //fileBackedTasksManager.historyToString(fileBackedTasksManager.getInMemoryHistoryManagerDefault());
                 System.out.println("История записана в файл");
             } else if (userInput == 12) {
-                FileBackedTasksManager.loadFromFile(new FileReader("file.csv"), fileBackedTasksManagerFromFile);
+                FileBackedTasksManager.loadFromFile(fileBackedTasksManager);
                 System.out.println("Задачи считаны из файла");
-                System.out.println(fileBackedTasksManagerFromFile.getEpicHashMap());
-                System.out.println(fileBackedTasksManagerFromFile.getSubTaskHashMap());
-                System.out.println(fileBackedTasksManagerFromFile.getTaskHashMap());
+                System.out.println(fileBackedTasksManager.getTaskHashMapList());
+                System.out.println(fileBackedTasksManager.getTaskHashMapList());
+                System.out.println(fileBackedTasksManager.getTaskHashMapList());
 
             } else if (userInput == 13) {
                 System.out.println("История считана из файла");
-                System.out.println(FileBackedTasksManager.historyFromString(fileBackedTasksManagerFromFile));
+               // System.out.println(FileBackedTasksManager.historyFromString(fileBackedTasksManagerFromFile));
             } else if (userInput == 14) {
                 System.out.println("Время завершения задачи:" + taskManager.getEndTime(taskManager.foundTask(4)));
             } else if (userInput == 15) {
                 System.out.println("Приоритезированный список:" + taskManager.getTaskTreeSetPrioritized());
+            } else if (userInput == 16) {
+                //запускаем сервер
+                KVServer kvServer = new KVServer();
+                kvServer.start();
+                //кладем данные менеджера на сервер
+                TaskManager httpTaskManager = Managers.getDefaultServer("http://localhost:8078");
+                httpTaskManager.createEpic(epic);
+                httpTaskManager.createSubTask(subTaskForEpicOne);
+                httpTaskManager.createTask(task);
+                //дергаем эпик,чтобы он попал в историю
+                httpTaskManager.getEpicByIdClient(1);
+                System.out.println("Данные на сервере");
+                //создаем нового менеджера и дублируем в него состояние первого из файла
+                TaskManager httpTaskManagerload = Managers.getDefaultServer("http://localhost:8078");
+                System.out.println("Данные c сервера выгружены");
+                System.out.println(httpTaskManagerload.getEpicHashMapList());
+                System.out.println(httpTaskManagerload.getInMemoryHistoryManager());
+
             } else if (userInput == 0) {
                 System.out.println("Выход из приложения");
                 return;
@@ -174,6 +194,7 @@ public class Main {
                 + "13 - Считать историю из файла;" + "\n" //сделано
                 + "14 - Посчитать продолжительность эпика;" + "\n" //сделано
                 + "15 - Вывести приоритезированный список задач (по startTime);" + "\n" //сделано
+                + "16 - Выгрузить менеджера с сервера" + "\n" //сделано
                 + "0 - Выйти из приложения.");
     }
 
