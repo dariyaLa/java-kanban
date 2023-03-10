@@ -3,43 +3,33 @@ package ru.yandex.praktikum.tasks;
 import org.junit.jupiter.api.Test;
 import ru.yandex.praktikum.exception.NotFoundExeption;
 import ru.yandex.praktikum.taskManager.FileBackedTasksManager;
-import ru.yandex.praktikum.taskManager.InMemoryTaskManager;
 import ru.yandex.praktikum.taskManager.TaskManager;
 
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager> {
 
-    //String pathFileManagerOut = "src" + File.separator + "resources" + File.separator + "fileIn.csv";
-
-    String pathFileManagerOut = "file.csv";
-
-    FileBackedTasksManager fileBackedTasksManagerFromFile = new FileBackedTasksManager(pathFileManagerOut);
-
-    FileBackedTasksManagerTest() throws IOException {
+    FileBackedTasksManagerTest() {
     }
 
     public TaskManager getManagerEmptyFile() throws IOException, NotFoundExeption {
-        //FileBackedTasksManager.loadFromFile(new FileReader("fileEmpty.csv"), fileBackedTasksManagerFromFile);
         FileBackedTasksManager fileBackedTasksManagerEmpty = new FileBackedTasksManager("fileEmpty.csv");
-        FileBackedTasksManager.loadFromFile(fileBackedTasksManagerFromFile);
-        return fileBackedTasksManagerFromFile;
+        FileBackedTasksManager.loadFromFile(fileBackedTasksManagerEmpty);
+        return fileBackedTasksManagerEmpty;
     }
 
     public TaskManager getManagerEpicWithoutSubTask() throws IOException, NotFoundExeption {
         FileBackedTasksManager fileBackedTasksManagerEmpty = new FileBackedTasksManager("fileEpicWithoutSubTask.csv");
-        FileBackedTasksManager.loadFromFile(fileBackedTasksManagerFromFile);
-        //FileBackedTasksManager.loadFromFile(new FileReader("fileEpicWithoutSubTask.csv"), fileBackedTasksManagerFromFile);
-        return fileBackedTasksManagerFromFile;
+        FileBackedTasksManager.loadFromFile(fileBackedTasksManagerEmpty);
+        return fileBackedTasksManagerEmpty;
     }
 
     @Override
     public TaskManager getManager() throws IOException, NotFoundExeption {
-        //FileBackedTasksManager.loadFromFile(new FileReader("file.csv"), fileBackedTasksManagerFromFile);
+        String pathFileManagerOut = "file.csv";
+        FileBackedTasksManager fileBackedTasksManagerFromFile = new FileBackedTasksManager(pathFileManagerOut);
         FileBackedTasksManager.loadFromFile(fileBackedTasksManagerFromFile);
         return fileBackedTasksManagerFromFile;
     }

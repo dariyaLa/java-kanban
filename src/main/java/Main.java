@@ -166,6 +166,7 @@ public class Main {
                 System.out.println("Данные c сервера выгружены");
                 System.out.println(httpTaskManagerload.getEpicHashMapList());
                 System.out.println(httpTaskManagerload.getInMemoryHistoryManager());
+                kvServer.stop();
 
             } else if (userInput == 0) {
                 System.out.println("Выход из приложения");

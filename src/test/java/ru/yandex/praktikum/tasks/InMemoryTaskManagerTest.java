@@ -1,6 +1,5 @@
 package ru.yandex.praktikum.tasks;
 
-import com.google.gson.Gson;
 import ru.yandex.praktikum.exception.NotFoundExeption;
 import ru.yandex.praktikum.taskManager.InMemoryTaskManager;
 import ru.yandex.praktikum.taskManager.TaskManager;
@@ -12,9 +11,6 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
-
-    private TaskManager taskManager = Managers.getDefault();
-
 
     @Override
     public TaskManager getManager() throws NotFoundExeption {
@@ -36,12 +32,4 @@ class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
         taskManager.createTask(task);
         return taskManager;
     }
-
-    /*@Override
-    public TaskManager getManagerEmpty() {
-        TaskManager taskManager = Managers.getDefault();
-        return taskManager;
-    }*/
 }
-
-
